@@ -161,6 +161,197 @@ st.markdown(
     .auth-copy { max-width:32rem; color:var(--orbit-muted); font-size:1rem; line-height:1.7; }
     .auth-detail { margin-top:1.7rem; padding-top:1.2rem; border-top:1px solid var(--orbit-line); color:var(--orbit-muted); font-size:.88rem; line-height:1.7; }
     .auth-card-title { margin:0; color:var(--orbit-ink); font-size:1.35rem; font-weight:700; letter-spacing:-.02em; }
+    .stApp:has(.st-key-auth-home) { background:#f7f8f6; }
+    .stApp:has(.st-key-auth-home) [data-testid="stHeader"] { display:none; }
+    .stApp:has(.st-key-auth-home) [data-testid="stMain"] > div {
+      max-width:1320px;
+      padding:0 2.5rem 2.25rem;
+    }
+    .st-key-auth-home { animation:auth-rise .65s cubic-bezier(.2,.7,.25,1) both; }
+    .auth-nav {
+      display:flex; align-items:center; gap:.7rem; color:#1e343e;
+      font-size:.86rem; font-weight:700; letter-spacing:.01em;
+    }
+    .auth-nav-mark {
+      display:grid; width:2.35rem; height:2.35rem; place-items:center;
+      border-radius:11px; background:#15313a; color:#8ce0d4;
+      box-shadow:0 4px 12px rgba(19,46,54,.14);
+    }
+    .auth-nav-name { font-size:1.05rem; letter-spacing:.12em; }
+    .auth-nav-context {
+      margin-left:.45rem; padding-left:.9rem; border-left:1px solid #dfe5e2;
+      color:#76858a; font-size:.77rem; font-weight:500; letter-spacing:0;
+    }
+    .auth-main { align-items:center; padding-top:1.2rem; }
+    .auth-copy-column { padding:1.2rem .8rem 1rem 0; }
+    .auth-eyebrow {
+      display:inline-flex; align-items:center; gap:.55rem; margin-bottom:1.35rem;
+      color:#43716c; font-size:.68rem; font-weight:700; letter-spacing:.13em;
+      text-transform:uppercase;
+    }
+    .auth-eyebrow:before {
+      content:""; width:1.65rem; height:1px; background:#70aaa0;
+    }
+    .auth-home-heading {
+      max-width:650px; margin:0; color:#162c35;
+      font-family:Georgia,"Times New Roman",serif !important;
+      font-size:clamp(2.8rem,4.7vw,4rem) !important;
+      font-weight:600 !important; line-height:1.04 !important;
+      letter-spacing:-.052em !important;
+    }
+    .auth-home-heading em {
+      color:#147e79; font-family:inherit !important; font-weight:500 !important;
+    }
+    .auth-home-copy {
+      max-width:535px; margin:1.3rem 0 0; color:#63747a;
+      font-size:1rem; line-height:1.8;
+    }
+    .auth-cta-row { display:flex; align-items:center; gap:.8rem; margin-top:1.45rem; }
+    .auth-points {
+      display:flex; flex-wrap:wrap; gap:.55rem 1.15rem; margin-top:1.25rem;
+      color:#63747a; font-size:.76rem;
+    }
+    .auth-points span { display:inline-flex; align-items:center; gap:.4rem; }
+    .auth-points span:before {
+      content:""; width:.36rem; height:.36rem; border-radius:50%;
+      background:#3a9183; box-shadow:0 0 0 3px #e4f0eb;
+    }
+    .auth-visual {
+      position:relative; isolation:isolate; overflow:hidden; min-height:340px;
+      margin-top:1.35rem; padding:1.15rem; border:1px solid #29434a;
+      border-radius:17px; color:#edf5f2;
+      background:linear-gradient(145deg,#17313a 0%,#1b3439 55%,#263b3b 100%);
+      box-shadow:0 18px 38px rgba(30,58,58,.12);
+    }
+    .auth-visual:before, .auth-visual:after {
+      position:absolute; z-index:-1; content:""; pointer-events:none;
+      border:1px solid rgba(151,218,201,.09); border-radius:50%;
+    }
+    .auth-visual:before { width:330px; height:330px; right:-130px; top:-195px; }
+    .auth-visual:after { width:250px; height:250px; right:-90px; top:-155px; }
+    .auth-visual-top {
+      display:flex; align-items:center; justify-content:space-between; gap:.6rem;
+      color:#b6c8c4; font-size:.61rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .auth-visual-brand { display:flex; align-items:center; gap:.5rem; }
+    .auth-visual-brand svg { color:#85d7c6; }
+    .auth-local-tag {
+      padding:.35rem .55rem; border:1px solid rgba(180,222,204,.2);
+      border-radius:999px; color:#b8d7c8; font-size:.56rem; letter-spacing:.08em;
+    }
+    .auth-review-card {
+      max-width:440px; margin:1.4rem auto 0; padding:1.2rem 1.25rem;
+      border:1px solid rgba(255,255,255,.72); border-radius:12px;
+      background:#f9fbf9; color:#1b3039;
+      box-shadow:0 15px 34px rgba(5,20,24,.2);
+    }
+    .auth-review-top {
+      display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+      color:#718087; font-size:.58rem; font-weight:700; letter-spacing:.09em;
+    }
+    .auth-review-status {
+      display:inline-flex; align-items:center; gap:.35rem; color:#267867;
+    }
+    .auth-review-status:before {
+      content:""; width:.38rem; height:.38rem; border-radius:50%; background:#4d9d7c;
+    }
+    .auth-review-title {
+      margin:.85rem 0 .3rem; color:#1c3139;
+      font:600 1.2rem Georgia,"Times New Roman",serif; letter-spacing:-.02em;
+    }
+    .auth-review-subtitle { margin:0; color:#75848a; font-size:.72rem; line-height:1.55; }
+    .auth-flow { position:relative; display:grid; gap:.55rem; margin-top:1.05rem; }
+    .auth-flow:before {
+      position:absolute; left:1rem; top:1.75rem; bottom:1.75rem; width:1px;
+      background:#dbe8e2; content:"";
+    }
+    .auth-flow-item {
+      position:relative; display:flex; align-items:center; gap:.7rem;
+      min-height:2.35rem; padding:.38rem .55rem; border:1px solid #e8eeea;
+      border-radius:8px; background:#fff; font-size:.71rem;
+    }
+    .auth-flow-icon {
+      display:grid; width:1.35rem; height:1.35rem; flex:none; place-items:center;
+      border:1px solid #cfe4dc; border-radius:50%; background:#eef6f1;
+      color:#307b6b; font-size:.58rem; font-weight:700;
+    }
+    .auth-flow-label { flex:1; color:#334b51; font-weight:600; }
+    .auth-flow-state { color:#778880; font-size:.62rem; }
+    .auth-review-foot {
+      display:flex; justify-content:space-between; gap:.75rem; margin-top:.85rem;
+      padding-top:.7rem; border-top:1px solid #e7ece9; color:#6c7d7e;
+      font-size:.62rem; line-height:1.45;
+    }
+    .auth-review-foot b { color:#287767; font-weight:600; }
+    .auth-visual-caption {
+      margin:.8rem .1rem 0; color:#b2c5c0; font-size:.64rem;
+      letter-spacing:.02em; text-align:center;
+    }
+    .st-key-auth-access-card {
+      padding:1.35rem 1.35rem 1.1rem; border:1px solid #e1e7e4;
+      border-radius:14px; background:rgba(255,255,255,.93);
+      box-shadow:0 12px 35px rgba(26,53,55,.07);
+      animation:auth-rise .72s .1s cubic-bezier(.2,.7,.25,1) both;
+    }
+    .auth-access-kicker {
+      margin-bottom:.45rem; color:#438178; font-size:.62rem;
+      font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    }
+    .auth-access-title {
+      margin:0; color:#1b3038; font:600 1.55rem Georgia,"Times New Roman",serif;
+      letter-spacing:-.025em;
+    }
+    .auth-access-copy { margin:.35rem 0 1rem; color:#728187; font-size:.78rem; }
+    .st-key-auth-access-card [data-testid="stRadio"] > label { display:none; }
+    .st-key-auth-access-card [data-testid="stRadio"] > div {
+      gap:.35rem; padding:.25rem; border-radius:8px; background:#f0f3f1;
+    }
+    .st-key-auth-access-card [data-testid="stRadioOption"] {
+      flex:1; justify-content:center; padding:.42rem .5rem; border-radius:6px;
+      color:#68787b;
+    }
+    .st-key-auth-access-card [data-testid="stRadioOption"][data-selected="true"] {
+      background:#fff; color:#176f6c;
+      box-shadow:0 1px 3px rgba(29,55,56,.1);
+    }
+    .st-key-auth-access-card [data-testid="stForm"] {
+      padding:0; border:0; background:transparent;
+    }
+    .st-key-auth-access-card [data-testid="stWidgetLabel"] { font-size:.77rem; font-weight:600; }
+    .st-key-auth-access-card [data-testid="stTextInput"] input { min-height:2.7rem; }
+    .auth-access-note {
+      margin-top:.8rem; padding-top:.8rem; border-top:1px solid #edf0ee;
+      color:#7a888b; font-size:.66rem; line-height:1.6;
+    }
+    .st-key-auth-hero-create button {
+      min-height:2.8rem; padding:0 1.15rem; border-radius:8px;
+    }
+    .st-key-auth-hero-signin button, .st-key-auth-nav-signin button {
+      min-height:2.8rem; padding:0 1rem; border-radius:8px;
+      border-color:#dbe3df !important; background:rgba(255,255,255,.65) !important;
+    }
+    .st-key-auth-nav-row { padding:.85rem 0; border-bottom:1px solid #e8ece9; }
+    .st-key-auth-nav-row [data-testid="stHorizontalBlock"] { align-items:center; }
+    .st-key-auth-nav-row [data-testid="stButton"] { display:flex; justify-content:flex-end; }
+    @keyframes auth-rise {
+      from { opacity:0; transform:translateY(12px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .st-key-auth-home, .st-key-auth-access-card { animation:none; }
+      .st-key-auth-access-card button, .auth-nav-mark { transition:none; }
+    }
+    @media (max-width: 900px) {
+      .stApp:has(.st-key-auth-home) [data-testid="stHorizontalBlock"]:has(.st-key-auth-copy-column) {
+        flex-wrap:wrap !important;
+      }
+      .stApp:has(.st-key-auth-home) [data-testid="stHorizontalBlock"]:has(.st-key-auth-copy-column) > .stColumn {
+        flex:1 1 100% !important;
+        width:100% !important;
+        min-width:100% !important;
+      }
+    }
     .cc-top { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem 1.2rem; border:1px solid var(--orbit-line); border-radius:11px; background:var(--orbit-surface); margin-bottom:1rem; }
     .cc-brand { font:800 19px 'Segoe UI',sans-serif; letter-spacing:4px; color:var(--orbit-accent); }
     .cc-sub { font-size:11px; letter-spacing:1px; color:var(--orbit-muted); }
@@ -178,11 +369,28 @@ st.markdown(
       [data-testid="stMain"] > div { padding:1rem .75rem 2rem; }
       [data-testid="stHorizontalBlock"] { flex-wrap:wrap; gap:.65rem; }
       [data-testid="stHorizontalBlock"] > [data-testid="column"] { flex:1 1 100%; min-width:100% !important; }
+      .stApp:has(.st-key-auth-home) [data-testid="stMain"] > div { padding:0 .9rem 1.5rem; }
       .orbit-hero { padding:1.1rem; }
       .orbit-hero h1 { font-size:1.5rem; }
       .orbit-topbar, .cc-top { align-items:flex-start; flex-direction:column; gap:.45rem; }
       .auth-heading { font-size:2rem; }
       .cc-sub { font-size:10px; line-height:1.5; }
+      .st-key-auth-nav-row [data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.35rem !important; }
+      .st-key-auth-nav-row [data-testid="stHorizontalBlock"] > .stColumn:first-child {
+        min-width:0 !important; flex:1 1 auto !important;
+      }
+      .st-key-auth-nav-row [data-testid="stHorizontalBlock"] > .stColumn:last-child {
+        min-width:0 !important; flex:0 0 5.2rem !important;
+      }
+      .auth-nav-context { display:none; }
+      .auth-main { padding-top:.5rem; }
+      .auth-copy-column { padding:.9rem 0 0; }
+      .auth-home-heading { max-width:100%; font-size:clamp(2.65rem,12vw,3.55rem) !important; }
+      .auth-home-copy { margin-top:.9rem; font-size:.92rem; }
+      .auth-cta-row { gap:.5rem; margin-top:1rem; }
+      .auth-visual { min-height:0; margin-top:.9rem; padding:.85rem; }
+      .auth-review-card { margin-top:1rem; padding:1rem; }
+      .st-key-auth-access-card { padding:1.1rem; }
     }
     hr { border-color:var(--orbit-line); }
     </style>
@@ -209,66 +417,178 @@ account = (
 if st.session_state.orbit_user and account is None:
     st.session_state.orbit_user = None
 
+def _set_auth_mode(mode: str) -> None:
+    st.session_state["auth_mode"] = mode
+
+
 if not st.session_state.orbit_user:
-    auth_intro, auth_panel = st.columns([1.05, 1], gap="large")
-    with auth_intro:
-        st.markdown(
-            '<div class="auth-brand">ORBIT &nbsp; / &nbsp; Decision intelligence</div>'
-            '<div class="auth-heading">A clearer view of every claim.</div>'
-            '<div class="auth-copy">Bring shipment evidence, policy checks, and human decisions together in one thoughtful review workspace.</div>'
-            '<div class="auth-detail"><b>Evidence before action</b><br>'
-            'Local records and policy guidance stay visible throughout the review.<br><br>'
-            '<b>Human-led decisions</b><br>'
-            'Sensitive actions remain gated and are recorded for review.</div>',
-            unsafe_allow_html=True,
-        )
-    with auth_panel:
-        with st.container(border=True, key="auth-card"):
-            st.markdown(
-                '<div class="auth-card-title">Welcome to ORBIT</div>'
-                '<div class="cc-muted">Sign in or create an account to continue.</div>',
-                unsafe_allow_html=True,
-            )
-            login_tab, signup_tab = st.tabs(["Sign in", "Create account"])
-            with login_tab:
-                with st.form("orbit_login_form"):
-                    login_email = st.text_input("Email address", placeholder="you@example.com")
-                    login_password = st.text_input(
-                        "Password",
-                        type="password",
+    st.session_state.setdefault("auth_mode", "Create account")
+    with st.container(key="auth-home"):
+        with st.container(key="auth-nav-row"):
+            nav_brand, nav_action = st.columns([5, 1], gap="small")
+            with nav_brand:
+                st.markdown(
+                    '<div class="auth-nav">'
+                    '<span class="auth-nav-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+                    '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/>'
+                    '<circle cx="12" cy="12" r="3" fill="currentColor"/>'
+                    '<path d="M12 1.8v3.1M22.2 12h-3.1M12 22.2v-3.1M1.8 12h3.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+                    '</svg></span><span class="auth-nav-name">ORBIT</span>'
+                    '<span class="auth-nav-context">Decision intelligence for shipment claims</span>'
+                    '</div>',
+                    unsafe_allow_html=True,
+                )
+            with nav_action:
+                st.button(
+                    "Sign in",
+                    key="auth-nav-signin",
+                    on_click=_set_auth_mode,
+                    args=("Sign in",),
+                    width="stretch",
+                )
+
+        auth_intro, auth_panel = st.columns([1.12, .88], gap="large")
+        with auth_intro:
+            with st.container(key="auth-copy-column"):
+                st.markdown(
+                    '<div class="auth-eyebrow">A more considered claim review</div>'
+                    '<h1 class="auth-home-heading">Every claim deserves<br>'
+                    '<em>a clearer answer.</em></h1>'
+                    '<p class="auth-home-copy">Bring shipment evidence, policy guidance, '
+                    'and human judgment into one calm, explainable review. ORBIT helps '
+                    'your team see what matters before deciding what comes next.</p>',
+                    unsafe_allow_html=True,
+                )
+                create_cta, signin_cta = st.columns([1.2, 1], gap="small")
+                with create_cta:
+                    st.button(
+                        "Create your account",
+                        key="auth-hero-create",
+                        type="primary",
+                        on_click=_set_auth_mode,
+                        args=("Create account",),
+                        width="stretch",
                     )
-                    login_submit = st.form_submit_button("Enter ORBIT", type="primary", width="stretch")
-                if login_submit:
-                    account = authenticate_user(login_email, login_password)
-                    if account:
-                        st.session_state.orbit_user = account["email"]
-                        st.rerun()
-                    else:
-                        st.error("Email or password is incorrect.")
-            with signup_tab:
-                with st.form("orbit_signup_form"):
-                    signup_email = st.text_input("Email address", key="signup_email", placeholder="you@example.com")
-                    signup_password = st.text_input(
-                        "Password",
-                        type="password",
-                        key="signup_password",
-                        help="Use at least 8 characters.",
+                with signin_cta:
+                    st.button(
+                        "I already have an account",
+                        key="auth-hero-signin",
+                        on_click=_set_auth_mode,
+                        args=("Sign in",),
+                        width="stretch",
                     )
-                    signup_confirm = st.text_input(
-                        "Confirm password",
-                        type="password",
+                st.markdown(
+                    '<div class="auth-points"><span>Evidence-led reviews</span>'
+                    '<span>Human-gated actions</span><span>Local-first by design</span></div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    '<div class="auth-visual">'
+                    '<div class="auth-visual-top"><span class="auth-visual-brand">'
+                    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+                    '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/>'
+                    '<circle cx="12" cy="12" r="3" fill="currentColor"/>'
+                    '</svg>ORBIT REVIEW</span><span class="auth-local-tag">ILLUSTRATIVE WORKFLOW</span></div>'
+                    '<div class="auth-review-card"><div class="auth-review-top">'
+                    '<span>CLAIM REVIEW</span><span class="auth-review-status">READY FOR REVIEW</span></div>'
+                    '<div class="auth-review-title">A clearer view of the case.</div>'
+                    '<p class="auth-review-subtitle">A guided path from available evidence '
+                    'to a human decision.</p><div class="auth-flow">'
+                    '<div class="auth-flow-item"><span class="auth-flow-icon">01</span>'
+                    '<span class="auth-flow-label">Shipment evidence</span>'
+                    '<span class="auth-flow-state">Collected</span></div>'
+                    '<div class="auth-flow-item"><span class="auth-flow-icon">02</span>'
+                    '<span class="auth-flow-label">Policy checks</span>'
+                    '<span class="auth-flow-state">Explained</span></div>'
+                    '<div class="auth-flow-item"><span class="auth-flow-icon">03</span>'
+                    '<span class="auth-flow-label">Reviewer decision</span>'
+                    '<span class="auth-flow-state">Human-led</span></div>'
+                    '</div><div class="auth-review-foot"><span>Next step</span>'
+                    '<b>Action stays gated until approved</b></div></div>'
+                    '<div class="auth-visual-caption">Sample records · No live carrier connection</div>'
+                    '</div>',
+                    unsafe_allow_html=True,
+                )
+        with auth_panel:
+            with st.container(key="auth-access-card"):
+                st.markdown(
+                    '<div class="auth-access-kicker">Your secure workspace</div>'
+                    '<div class="auth-access-title">'
+                    + (
+                        "Welcome back"
+                        if st.session_state["auth_mode"] == "Sign in"
+                        else "Get started with ORBIT"
                     )
-                    signup_submit = st.form_submit_button("Create ORBIT account", type="primary", width="stretch")
-                if signup_submit:
-                    if signup_password != signup_confirm:
-                        st.error("Passwords do not match.")
-                    else:
-                        ok, message = register_user(signup_email, signup_password)
-                        (st.success if ok else st.error)(message)
-            st.caption(
-                "Passwords are stored as salted hashes in the local account database. "
-                "New accounts receive User access; an administrator can promote an account."
-            )
+                    + '</div><div class="auth-access-copy">Sign in or create an account '
+                    'to continue to your claim workspace.</div>',
+                    unsafe_allow_html=True,
+                )
+                st.radio(
+                    "Access your workspace",
+                    ["Create account", "Sign in"],
+                    horizontal=True,
+                    label_visibility="collapsed",
+                    key="auth_mode",
+                )
+                if st.session_state["auth_mode"] == "Sign in":
+                    with st.form("orbit_login_form"):
+                        login_email = st.text_input(
+                            "Email address",
+                            placeholder="you@example.com",
+                        )
+                        login_password = st.text_input(
+                            "Password",
+                            type="password",
+                        )
+                        login_submit = st.form_submit_button(
+                            "Sign in to ORBIT",
+                            type="primary",
+                            width="stretch",
+                        )
+                    if login_submit:
+                        account = authenticate_user(login_email, login_password)
+                        if account:
+                            st.session_state.orbit_user = account["email"]
+                            st.rerun()
+                        else:
+                            st.error("Email or password is incorrect.")
+                else:
+                    with st.form("orbit_signup_form"):
+                        signup_email = st.text_input(
+                            "Email address",
+                            key="signup_email",
+                            placeholder="you@example.com",
+                        )
+                        signup_password = st.text_input(
+                            "Password",
+                            type="password",
+                            key="signup_password",
+                            help="Use at least 8 characters.",
+                        )
+                        signup_confirm = st.text_input(
+                            "Confirm password",
+                            type="password",
+                        )
+                        signup_submit = st.form_submit_button(
+                            "Create your account",
+                            type="primary",
+                            width="stretch",
+                        )
+                    if signup_submit:
+                        if signup_password != signup_confirm:
+                            st.error("Passwords do not match.")
+                        else:
+                            ok, message = register_user(
+                                signup_email,
+                                signup_password,
+                            )
+                            (st.success if ok else st.error)(message)
+                st.markdown(
+                    '<div class="auth-access-note">Passwords are stored as salted hashes '
+                    'in the local account database. New accounts receive User access; '
+                    'an administrator can promote an account.</div>',
+                    unsafe_allow_html=True,
+                )
     st.stop()
 
 user_email = account["email"]
