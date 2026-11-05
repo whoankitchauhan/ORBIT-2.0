@@ -74,6 +74,16 @@ def initialize_auth_database(db_path: str | Path | None = None) -> None:
             WHERE role IS NULL OR role NOT IN ('admin', 'user')
             """
         )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_preferences (
+                email TEXT PRIMARY KEY,
+                theme TEXT NOT NULL DEFAULT 'System'
+                    CHECK (theme IN ('System', 'Light', 'Dark')),
+                FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE
+            )
+            """
+        )
 
 
 def normalize_email(email: str) -> str:
@@ -157,6 +167,95 @@ def require_admin(email: str, db_path: str | Path | None = None) -> dict[str, An
     if user is None or user["role"] != "admin":
         raise PermissionError("Administrator access is required for this action.")
     return user
+
+
+def list_users(
+    admin_email: str,
+    db_path: str | Path | None = None,
+) -> list[dict[str, Any]]:
+    initialize_auth_database(db_path)
+    with _connect(db_path) as connection:
+        connection.execute("BEGIN")
+        admin = connection.execute(
+            "SELECT role FROM users WHERE email = ?",
+            (normalize_email(admin_email),),
+        ).fetchone()
+        if admin is None or admin["role"] != "admin":
+            raise PermissionError("Administrator access is required for this action.")
+        rows = connection.execute(
+            "SELECT email, role, created_at FROM users ORDER BY email COLLATE NOCASE"
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def promote_user_to_admin_by_admin(
+    admin_email: str,
+    target_email: str,
+    db_path: str | Path | None = None,
+) -> None:
+    normalized_admin = normalize_email(admin_email)
+    normalized_target = normalize_email(target_email)
+    initialize_auth_database(db_path)
+    with _connect(db_path) as connection:
+        connection.execute("BEGIN IMMEDIATE")
+        admin = connection.execute(
+            "SELECT role FROM users WHERE email = ?",
+            (normalized_admin,),
+        ).fetchone()
+        if admin is None or admin["role"] != "admin":
+            raise PermissionError("Administrator access is required for this action.")
+        result = connection.execute(
+            "UPDATE users SET role = 'admin' WHERE email = ? AND role = 'user'",
+            (normalized_target,),
+        )
+        if result.rowcount != 1:
+            target = connection.execute(
+                "SELECT 1 FROM users WHERE email = ?",
+                (normalized_target,),
+            ).fetchone()
+            if target is None:
+                raise ValueError(
+                    f"No account exists for {normalized_target}. Create it in ORBIT first."
+                )
+
+
+def get_theme_preference(
+    email: str,
+    db_path: str | Path | None = None,
+) -> str | None:
+    initialize_auth_database(db_path)
+    with _connect(db_path) as connection:
+        row = connection.execute(
+            "SELECT theme FROM user_preferences WHERE email = ?",
+            (normalize_email(email),),
+        ).fetchone()
+    return row["theme"] if row else None
+
+
+def set_theme_preference(
+    email: str,
+    theme: str,
+    db_path: str | Path | None = None,
+) -> None:
+    normalized_theme = theme.strip().title()
+    if normalized_theme not in {"System", "Light", "Dark"}:
+        raise ValueError("Theme must be System, Light, or Dark.")
+
+    initialize_auth_database(db_path)
+    with _connect(db_path) as connection:
+        account = connection.execute(
+            "SELECT 1 FROM users WHERE email = ?",
+            (normalize_email(email),),
+        ).fetchone()
+        if account is None:
+            raise ValueError("A saved theme requires an existing account.")
+        connection.execute(
+            """
+            INSERT INTO user_preferences (email, theme) VALUES (?, ?)
+            ON CONFLICT(email) DO UPDATE SET theme = excluded.theme
+            """,
+            (normalize_email(email), normalized_theme),
+        )
 
 
 def promote_user_to_admin(email: str, db_path: str | Path | None = None) -> None:
