@@ -55,9 +55,13 @@ First register the account in ORBIT. Then, from the project folder, run:
 .\.venv\Scripts\python.exe auth.py promote-admin your-email@example.com
 ```
 
-Replace the example address with the registered account's email. Sign out and sign in again to refresh the role. Only run this command on a computer you trust: someone with access to the project folder and terminal controls the local demo's Administrator accounts.
+Replace the example address with the registered account's email. The app re-reads roles from the account database on each rerun, so refresh the recipient's session after promotion. Only run this command on a computer you trust: someone with access to the project folder and terminal controls the local demo's Administrator accounts.
 
 Administrators can see every account's claim records and approve or reject sensitive simulated actions. Approval checks the role saved in the account database; it is not granted by typing an administrator name into the app.
+
+Administrators can also open **User Access** in the sidebar to search registered accounts and grant Administrator access. This action cannot be undone from the app; use it only for accounts that need organization-wide claim visibility and approval authority. Regular Users do not see this page.
+
+Choose **System**, **Light**, or **Dark** under **Appearance** in the sidebar. Signed-in accounts retain their selection, and System follows the computer's appearance preference.
 
 ## Where the information is stored
 
