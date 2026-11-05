@@ -79,7 +79,7 @@ Run the automated tests:
 python -m unittest discover -s tests -v
 ```
 
-The tests cover representative decision outcomes, RAG retrieval and source attribution, input validation, evidence retrieval, account migration and password hashing, owner-scoped claim history, administrator-only approval, approval/rejection, prevention of execution before approval, persisted audit records, feedback ownership, and retry from a failed stage.
+The tests cover representative decision outcomes, RAG retrieval and source attribution, input validation, evidence retrieval, account migration and password hashing, persisted theme preferences, administrator-guarded account listing and promotion, owner-scoped claim history, administrator-only approval, approval/rejection, prevention of execution before approval, persisted audit records, feedback ownership, and retry from a failed stage.
 
 ## Project layout
 
@@ -88,7 +88,7 @@ The tests cover representative decision outcomes, RAG retrieval and source attri
 - `agents.py` — Research, Analysis, Validation, and Action agent logic.
 - `local_rag.py` — Local document preparation, embedding retrieval, and Ollama answer generation.
 - `storage.py` — SQLite schema, sample-data seeding, and read helpers.
-- `auth.py` — Local account registration, password verification, role migration, and admin promotion.
+- `auth.py` — Local account registration, password verification, role migration, theme preferences, and administrator-guarded account access.
 - `sample_data.py` — Simulated Delhivery shipment cases and demo policy examples.
 - `evaluation.py` — Same-dataset baseline comparison and safety/recovery checks.
 - `tests/` — Standard-library automated tests.
@@ -105,14 +105,18 @@ The support score is a heuristic, not a probability or calibrated model confiden
 
 Create accounts from the sign-in screen. New accounts—including accounts already present in an older database—have the **User** role. Users can create claims and access their own claim history and feedback. Only accounts with the **Administrator** role can view all users' claims or approve/reject sensitive simulated actions. Approval checks the role stored in the account database, not a name typed into the form.
 
+Administrators also have a **User Access** page for searching the account directory and granting an existing User administrator access. The app verifies the signed-in administrator against the account database before listing accounts or changing a role. Role changes cannot be reversed from the app; there is no role-demotion control.
+
+Choose **System**, **Light**, or **Dark** under **Appearance** in the sidebar. Signed-in accounts retain their selection; System follows the operating-system preference. The public home page also provides a theme selector.
+
 To grant Administrator access, first create the account in the app, then run this command from the project folder:
 
 ```powershell
 .\.venv\Scripts\python.exe auth.py promote-admin your-email@example.com
 ```
 
-Sign out and back in to refresh the role. There are no built-in credentials or passwords. The command modifies the local SQLite account database; it should only be run by someone with trusted access to the project machine. User accounts and salted PBKDF2-HMAC-SHA256 password hashes are stored in `orbit_users.db` by default. This is a local demo identity system, not production identity management. Do not expose the app publicly without a proper identity provider, HTTPS, session hardening, rate limiting, and deployment security.
+The app re-reads the role from the account database on each rerun; refresh the recipient's session after promotion. There are no built-in credentials or passwords. The command modifies the local SQLite account database; it should only be run by someone with trusted access to the project machine. User accounts and salted PBKDF2-HMAC-SHA256 password hashes are stored in `orbit_users.db` by default. This is a local demo identity system, not production identity management. Do not expose the app publicly without a proper identity provider, HTTPS, session hardening, rate limiting, and deployment security.
 
 ## ORBIT Command Center
 
-After signing in, use the sidebar's **Command Center** page for a compact, at-a-glance visual overview of the shipment-claim system. It shows persisted claim counts, the configured agent topology with statuses derived from recorded workflow events, the selected claim's decision/support details, recent claims, uncertainty components, and governance status. User accounts see their own records; administrators see all records. Use **Claim Workspace** to submit a new claim and inspect the detailed evidence, agent events, approvals, debate, decision graph, feedback, and adversarial scenarios. A user can submit and track a request; an administrator records the human approval or rejection. The Command Center does not invent live carrier activity; the project uses local simulated shipment records.
+After signing in, use the sidebar's **My Dashboard** (User) or **Admin Dashboard** (Administrator) for a compact, at-a-glance visual overview of the shipment-claim system. It shows persisted claim counts, the configured agent topology with statuses derived from recorded workflow events, the selected claim's decision/support details, recent claims, uncertainty components, and governance status. User accounts see their own records; administrators see all records. Use **New Claim** or **Claims & Approvals** to submit or review claims, and inspect detailed evidence, agent events, approvals, debate, decision graph, feedback, and adversarial scenarios. A user can submit and track a request; an administrator records the human approval or rejection. The dashboard does not invent live carrier activity; the project uses local simulated shipment records.
