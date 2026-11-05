@@ -6,9 +6,13 @@ from pathlib import Path
 from auth import (
     authenticate_user,
     get_user,
+    get_theme_preference,
     initialize_auth_database,
+    list_users,
     promote_user_to_admin,
+    promote_user_to_admin_by_admin,
     register_user,
+    set_theme_preference,
 )
 
 
@@ -59,6 +63,28 @@ class AuthenticationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "No account exists"):
             promote_user_to_admin("missing@example.com", self.db_path)
 
+    def test_user_directory_and_role_changes_require_admin(self) -> None:
+        register_user("admin@example.com", "a-long-demo-password", self.db_path)
+        register_user("user@example.com", "a-long-demo-password", self.db_path)
+        with self.assertRaises(PermissionError):
+            list_users("user@example.com", self.db_path)
+        with self.assertRaises(PermissionError):
+            promote_user_to_admin_by_admin(
+                "user@example.com", "user@example.com", self.db_path
+            )
+        self.assertEqual(get_user("user@example.com", self.db_path)["role"], "user")
+
+        promote_user_to_admin("admin@example.com", self.db_path)
+        accounts = list_users("admin@example.com", self.db_path)
+        self.assertEqual(
+            [(account["email"], account["role"]) for account in accounts],
+            [("admin@example.com", "admin"), ("user@example.com", "user")],
+        )
+        promote_user_to_admin_by_admin(
+            "admin@example.com", "user@example.com", self.db_path
+        )
+        self.assertEqual(get_user("user@example.com", self.db_path)["role"], "admin")
+
     def test_existing_accounts_migrate_to_normal_user_role(self) -> None:
         connection = sqlite3.connect(self.db_path)
         try:
@@ -83,6 +109,26 @@ class AuthenticationTests(unittest.TestCase):
         initialize_auth_database(self.db_path)
         account = get_user("existing@example.com", self.db_path)
         self.assertEqual(account["role"], "user")
+
+    def test_theme_preference_is_persisted_per_account(self) -> None:
+        register_user("theme@example.com", "a-long-demo-password", self.db_path)
+        self.assertIsNone(get_theme_preference("theme@example.com", self.db_path))
+
+        set_theme_preference("THEME@example.com", "dark", self.db_path)
+        self.assertEqual(
+            get_theme_preference("theme@example.com", self.db_path), "Dark"
+        )
+        set_theme_preference("theme@example.com", "System", self.db_path)
+        self.assertEqual(
+            get_theme_preference("theme@example.com", self.db_path), "System"
+        )
+
+    def test_theme_preference_rejects_unknown_mode_or_account(self) -> None:
+        register_user("theme@example.com", "a-long-demo-password", self.db_path)
+        with self.assertRaisesRegex(ValueError, "Theme must be"):
+            set_theme_preference("theme@example.com", "auto", self.db_path)
+        with self.assertRaisesRegex(ValueError, "existing account"):
+            set_theme_preference("missing@example.com", "Dark", self.db_path)
 
 
 if __name__ == "__main__":
