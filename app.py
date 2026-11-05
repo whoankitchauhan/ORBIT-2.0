@@ -153,6 +153,166 @@ st.markdown(
     code { color:#375267; background:#edf1f4; border-radius:4px; padding:.1rem .25rem; }
     [data-testid="stDataFrame"], [data-testid="stTable"] { border:1px solid var(--orbit-line); border-radius:9px; overflow:hidden; }
     [data-testid="stCaptionContainer"] { color:var(--orbit-muted); }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stMain"] h1,
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stMain"] h2,
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stMain"] h3 {
+      color:#20363b;
+      letter-spacing:-.025em;
+    }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-topbar {
+      padding:.8rem 1rem;
+      border-color:#29434a;
+      border-radius:10px;
+      background:#17313a;
+      color:#bfd0cb;
+      font-size:.68rem;
+      box-shadow:0 6px 18px rgba(20,47,51,.08);
+    }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-topbar b { color:#8dd3c4; }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-topbar span:first-child { white-space:nowrap; }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-hero {
+      padding:1.75rem 1.8rem;
+      border-color:#dbe5e0;
+      border-radius:14px;
+      background:linear-gradient(112deg,#fff 0%,#f7faf7 70%,#edf5ef 100%);
+      box-shadow:0 12px 30px rgba(27,52,55,.055);
+    }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-hero h1 {
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(1.9rem,3vw,2.55rem);
+      font-weight:600;
+      letter-spacing:-.04em;
+      line-height:1.12;
+    }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-kicker {
+      color:#39766b;
+      font-size:.68rem;
+      font-weight:700;
+    }
+    .stApp:not(:has(.st-key-auth-home)) .orbit-pill {
+      border-color:#d2e5dc;
+      background:#edf5f0;
+      color:#327464;
+    }
+    .st-key-claim-intake-card,
+    .st-key-shipment-preview-card,
+    .st-key-claim-review-summary-card {
+      padding:1.1rem;
+      border:1px solid #e0e7e2;
+      border-radius:13px;
+      background:#fff;
+      box-shadow:0 5px 18px rgba(28,52,54,.035);
+    }
+    .st-key-claim-intake-card [data-testid="stForm"] {
+      padding:0;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+    .st-key-shipment-preview-card { background:#f7faf8; }
+    .shipment-preview-kicker {
+      color:#548078;
+      font-size:.65rem;
+      font-weight:700;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+    }
+    .shipment-preview-title {
+      margin:.55rem 0 .25rem;
+      color:#20363b;
+      font:600 1.45rem Georgia,"Times New Roman",serif;
+      letter-spacing:-.025em;
+    }
+    .workspace-steps {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.6rem;
+      margin:.95rem 0 1.25rem;
+    }
+    .workspace-step {
+      display:flex;
+      align-items:center;
+      gap:.45rem;
+      padding:.45rem .7rem;
+      border:1px solid #e2eae5;
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      color:#566c68;
+      font-size:.7rem;
+      font-weight:600;
+    }
+    .workspace-step b {
+      color:#408174;
+      font-size:.62rem;
+      letter-spacing:.04em;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stExpander"] {
+      transition:border-color .16s ease, box-shadow .16s ease;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stExpander"]:hover {
+      border-color:#cddbd3;
+      box-shadow:0 3px 12px rgba(28,52,54,.035);
+    }
+    .stApp:not(:has(.st-key-auth-home)) .stTabs [role="tablist"] {
+      overflow-x:auto;
+      flex-wrap:nowrap;
+      scrollbar-width:thin;
+      scrollbar-color:#c6d5ce transparent;
+    }
+    .stApp:not(:has(.st-key-auth-home)) .stTabs [role="tab"] {
+      flex:none;
+      white-space:nowrap;
+    }
+    .stApp:not(:has(.st-key-auth-home)) .stTabs [data-testid="stTabPanel"] {
+      padding-top:1rem;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stChatMessage"] {
+      margin:.65rem 0;
+      padding:.85rem 1rem;
+      border:1px solid #e4eae6;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 3px 12px rgba(28,52,54,.025);
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+      background:#f6faf7;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stRadio"] label {
+      padding:.48rem .6rem;
+      border:1px solid transparent;
+      border-radius:8px;
+      transition:background-color .15s ease, border-color .15s ease;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+      border-color:#344b53;
+      background:#1b303a;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+      border-color:#315c5a;
+      background:#1b3d40;
+      color:#a8e1d4;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] p,
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] label,
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] *,
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stCaptionContainer"] * {
+      color:#c2d0d5 !important;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+      color:#a8e1d4 !important;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] .orbit-kicker {
+      color:#9bb2b8 !important;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stButton"] button {
+      border-color:#40545c !important;
+      background:#1a3039 !important;
+      color:#e4eeea !important;
+    }
+    .stApp:not(:has(.st-key-auth-home)) [data-testid="stSidebar"] [data-testid="stButton"] button:hover {
+      border-color:#5b827a !important;
+      background:#214047 !important;
+    }
     button:focus-visible, input:focus-visible, textarea:focus-visible, [role="combobox"]:focus-visible {
       outline:2px solid #087e83; outline-offset:2px;
     }
@@ -391,6 +551,11 @@ st.markdown(
       .auth-visual { min-height:0; margin-top:.9rem; padding:.85rem; }
       .auth-review-card { margin-top:1rem; padding:1rem; }
       .st-key-auth-access-card { padding:1.1rem; }
+      .stApp:not(:has(.st-key-auth-home)) .orbit-hero { padding:1.2rem; }
+      .st-key-claim-intake-card, .st-key-shipment-preview-card { padding:.85rem; }
+      .workspace-steps { gap:.4rem; }
+      .workspace-step { padding:.4rem .55rem; font-size:.66rem; }
+      .stApp:not(:has(.st-key-auth-home)) .stTabs [role="tab"] { padding-inline:.65rem; }
     }
     hr { border-color:var(--orbit-line); }
     </style>
@@ -1047,46 +1212,32 @@ if selected_page == "AI Assistant":
 
 st.markdown(
     """
-    <div class="orbit-topbar"><span><b>ORBIT / MISSION CONTROL</b> &nbsp; LOCAL CLAIM REVIEW</span><span>LOCAL ENVIRONMENT &nbsp; · &nbsp; <b>● SYSTEM READY</b></span></div>
+    <div class="orbit-topbar"><span><b>ORBIT / CLAIM WORKSPACE</b></span><span>LOCAL DEMO · <b>● SYSTEM READY</b></span></div>
     <section class="orbit-hero">
-      <div class="orbit-kicker">Evidence-first shipment claim review</div>
-      <h1>What would you like to investigate?</h1>
-      <p>Coordinate evidence research, independent analysis, agent challenges and human governance in one shipment-claim command center.</p>
+      <div class="orbit-kicker">Evidence-led · human-governed</div>
+      <h1>Review a shipment claim</h1>
+      <p>Choose a local sample record or enter a shipment ID, describe the customer’s concern, and let ORBIT assemble an explainable review.</p>
       <br><span class="orbit-pill">SIMULATION MODE · NO LIVE CARRIER CONNECTION</span>
     </section>
     """,
     unsafe_allow_html=True,
 )
 
-# Compact mission telemetry strip based on persisted claim runs.
-mission_runs = list_runs(
-    limit=500, owner_email=user_email, is_admin=is_admin
-)
-mission_total = len(mission_runs)
-mission_escalated = sum(1 for item in mission_runs if item.get("status") == "awaiting_approval")
-mission_done = sum(1 for item in mission_runs if item.get("status") == "completed")
-mission_cols = st.columns(4)
-mission_cols[0].metric("CLAIMS IN SYSTEM" if is_admin else "MY CLAIMS", mission_total)
-mission_cols[1].metric("COMPLETED REVIEWS", mission_done)
-mission_cols[2].metric("AWAITING HUMAN REVIEW", mission_escalated)
-mission_cols[3].metric("ACTIVE USER", user_email.split("@")[0])
-
 with st.expander("Evaluation dashboard", expanded=False):
     _render_evaluation()
 
-st.markdown("### Mission console")
-network_left, network_center, network_right = st.columns([1, 1.25, 1])
-with network_left:
-    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">Agent network</div><h3 class="orbit-glow">Orchestrator</h3><p>Research → Analysis → Validation</p><small class="cc-muted">Investigation and debate activate when evidence is incomplete or conflicting.</small></div>', unsafe_allow_html=True)
-with network_center:
-    st.markdown('<div class="orbit-panel" style="text-align:center"><div class="orbit-panel-title">Central command</div><h2>Investigate a claim</h2><p>Select a shipment, add the complaint, and launch the workflow.</p><span class="orbit-pill">EVIDENCE-FIRST DECISIONS</span></div>', unsafe_allow_html=True)
-with network_right:
-    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">Governance inspector</div><h3 class="orbit-glow">Human oversight</h3><p>Approval gates · audit trail · uncertainty routing</p><small class="cc-muted">No simulated action executes without a recorded reviewer decision.</small></div>', unsafe_allow_html=True)
-
-st.subheader("Start a claim review")
+st.markdown("### Start a claim review")
 st.caption(
     "Shipment and policy evidence comes from local sample records in SQLite. "
     "Your complaint and workflow results are stored locally under your account."
+)
+st.markdown(
+    '<div class="workspace-steps">'
+    '<span class="workspace-step"><b>01</b> Select a shipment</span>'
+    '<span class="workspace-step"><b>02</b> Describe the issue</span>'
+    '<span class="workspace-step"><b>03</b> Review the evidence</span>'
+    '</div>',
+    unsafe_allow_html=True,
 )
 shipment_cases = list_shipments()
 case_ids = [case["shipment_id"] for case in shipment_cases]
@@ -1105,43 +1256,51 @@ selected_case = next(
     case for case in shipment_cases
     if case["shipment_id"] == st.session_state["selected_case_id"]
 )
-st.selectbox(
-    "Load a sample case",
-    options=case_ids,
-    format_func=lambda case_id: _case_label(next(case for case in shipment_cases if case["shipment_id"] == case_id)),
-    key="selected_case_id",
-    on_change=_load_selected_case,
-)
-selected_case = next(
-    case for case in shipment_cases
-    if case["shipment_id"] == st.session_state["selected_case_id"]
-)
-
 left, right = st.columns([1.2, 1])
 with left:
-    with st.form("claim_review_form"):
-        st.text_input("Shipment / AWB ID", key="shipment_id_input", max_chars=16)
-        st.text_area(
-            "Customer complaint",
-            key="complaint_input",
-            height=115,
-            max_chars=1000,
-            help="10–1,000 characters. Use a sample shipment ID to load its local record.",
+    with st.container(border=True, key="claim-intake-card"):
+        st.selectbox(
+            "Load a sample case",
+            options=case_ids,
+            format_func=lambda case_id: _case_label(next(case for case in shipment_cases if case["shipment_id"] == case_id)),
+            key="selected_case_id",
+            on_change=_load_selected_case,
         )
-        submitted = st.form_submit_button("Review claim", type="primary", width="stretch")
+        selected_case = next(
+            case for case in shipment_cases
+            if case["shipment_id"] == st.session_state["selected_case_id"]
+        )
+        with st.form("claim_review_form"):
+            st.text_input("Shipment / AWB ID", key="shipment_id_input", max_chars=16)
+            st.text_area(
+                "Customer complaint",
+                key="complaint_input",
+                height=135,
+                max_chars=1000,
+                help="10–1,000 characters. Use a sample shipment ID to load its local record.",
+            )
+            submitted = st.form_submit_button("Review claim", type="primary", width="stretch")
 with right:
-    st.markdown("**Selected simulated shipment**")
-    st.markdown(f"**{selected_case['shipment_id']}** · {selected_case['claim_type'].replace('_', ' ').title()}")
-    st.write(f"{selected_case['origin']} → {selected_case['destination']}")
-    st.caption(f"Current record status: {selected_case['status']}")
-    st.caption(
-        "Available evidence in local record: "
-        + ", ".join(
-            document.replace("_", " ")
+    with st.container(border=True, key="shipment-preview-card"):
+        available_documents = ", ".join(
+            document.replace("_", " ").title()
             for document, present in selected_case["documents"].items()
             if present
+        ) or "No documents recorded"
+        st.markdown(
+            '<div class="shipment-preview-kicker">Selected sample shipment</div>',
+            unsafe_allow_html=True,
         )
-    )
+        st.subheader(selected_case["shipment_id"])
+        st.write(f"{selected_case['origin']} → {selected_case['destination']}")
+        details = st.columns(2)
+        details[0].caption("CLAIM TYPE")
+        details[0].write(selected_case["claim_type"].replace("_", " ").title())
+        details[1].caption("CURRENT STATUS")
+        details[1].write(selected_case["status"])
+        st.markdown("**Available evidence**")
+        st.write(available_documents)
+        st.caption("Sample data is fictional and does not connect to live carrier systems.")
 
 if submitted:
     try:
@@ -1197,18 +1356,19 @@ run = (
 )
 if run:
     st.divider()
-    st.subheader(f"Claim review · {run['shipment_id']}")
-    status_columns = st.columns(4)
-    status_columns[0].metric("Workflow status", run["status"].replace("_", " ").title())
-    status_columns[1].metric(
-        "Eligibility decision",
-        (run["decision"] or "Pending").replace("_", " ").title(),
-    )
-    status_columns[2].metric(
-        "Prepared action",
-        (run["action_type"] or "Not prepared").replace("_", " ").title(),
-    )
-    status_columns[3].metric("Agent processing", f"{run['processing_ms']} ms")
+    with st.container(border=True, key="claim-review-summary-card"):
+        st.subheader(f"Claim review · {run['shipment_id']}")
+        status_columns = st.columns(4)
+        status_columns[0].metric("Workflow status", run["status"].replace("_", " ").title())
+        status_columns[1].metric(
+            "Eligibility decision",
+            (run["decision"] or "Pending").replace("_", " ").title(),
+        )
+        status_columns[2].metric(
+            "Prepared action",
+            (run["action_type"] or "Not prepared").replace("_", " ").title(),
+        )
+        status_columns[3].metric("Agent processing", f"{run['processing_ms']} ms")
 
     if run["status"] == "failed":
         st.error(f"Workflow error: {run['error']}")
