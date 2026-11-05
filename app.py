@@ -41,46 +41,150 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    :root { --bg:#080e18; --panel:#101a28; --panel2:#0c1522; --line:#203347; --text:#e7f0f7; --muted:#8297aa; --cyan:#36d6cf; --blue:#579bff; --violet:#9a7cff; --amber:#f2a65a; }
-    html, body, [class*="css"] { font-family:Inter, "Segoe UI", sans-serif; }
-    .stApp { background: radial-gradient(ellipse at 50% 0%, #14263a 0%, #080e18 58%); color:var(--text); }
-    [data-testid="stHeader"] { background:rgba(8,14,24,.82); }
-    [data-testid="stSidebar"] { background:#0b1420; border-right:1px solid var(--line); }
-    [data-testid="stSidebar"] > div:first-child { padding-top:1.3rem; }
-    .orbit-brand { font:800 1.65rem 'Segoe UI',sans-serif; letter-spacing:.18em; color:var(--cyan); }
-    .orbit-kicker { color:var(--muted); font-size:.7rem; letter-spacing:.17em; text-transform:uppercase; }
-    .orbit-topbar { display:flex; justify-content:space-between; align-items:center; padding:.65rem 1rem; margin-bottom:1rem; background:rgba(12,21,34,.88); border:1px solid var(--line); border-radius:12px; color:#a9bfd0; font-size:.72rem; letter-spacing:.08em; }
-    .orbit-topbar b { color:var(--cyan); }
-    .orbit-hero { position:relative; overflow:hidden; background:linear-gradient(120deg,rgba(16,34,51,.97),rgba(15,25,43,.95) 60%,rgba(36,29,67,.88)); border:1px solid #29465b; border-radius:18px; padding:1.35rem 1.6rem; margin:.2rem 0 1rem; box-shadow:0 16px 50px rgba(0,0,0,.22); }
-    .orbit-hero:after { content:'◉'; position:absolute; right:5%; top:-55px; font-size:220px; color:rgba(54,214,207,.055); }
-    .orbit-hero h1 { font:700 2rem 'Segoe UI',sans-serif; margin:.2rem 0 .35rem; color:#f1f7fb; }
-    .orbit-hero p { color:#9bb0c2; margin:0; max-width:760px; }
-    .orbit-pill { display:inline-block; border:1px solid #286e70; color:#7ce7df; background:#102c35; border-radius:999px; padding:.25rem .65rem; font-size:.68rem; font-weight:700; letter-spacing:.1em; }
-    .orbit-panel { background:linear-gradient(145deg,#111e2d,#0d1724); border:1px solid var(--line); border-radius:13px; padding:1rem; min-height:120px; }
-    .orbit-panel-title { color:#8ca4b7; font-size:.68rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; }
-    .orbit-glow { color:var(--cyan); }
-    div.stButton > button[kind="primary"], div.stFormSubmitButton > button[kind="primary"] { background:linear-gradient(100deg,#168e91,#276fc2); border:1px solid #38bdb7; color:white; font-weight:700; border-radius:8px; }
-    div.stButton > button[kind="primary"]:hover, div.stFormSubmitButton > button[kind="primary"]:hover { background:#1c9fa1; border-color:#5de0d7; color:white; }
-    div[data-testid="stMetric"] { background:linear-gradient(145deg,#122234,#0d1826); border:1px solid var(--line); border-radius:10px; padding:.75rem .9rem; }
-    div[data-testid="stMetricLabel"] { color:#8ca4b7; }
-    div[data-testid="stMetricValue"] { color:#e7f7fa; }
-    .stTabs [data-baseweb="tab-list"] { gap:.35rem; background:#0c1623; border:1px solid var(--line); border-radius:10px; padding:.3rem; }
-    .stTabs [data-baseweb="tab"] { color:#91a8bb; border-radius:7px; }
-    .stTabs [aria-selected="true"] { background:#173443; color:#6ce4dc; }
-    [data-testid="stExpander"] { background:#0e1926; border:1px solid var(--line); border-radius:9px; }
-    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] { background:#0b1623; color:#e7f0f7; border-color:#294257; }
-    button:focus-visible, input:focus-visible, textarea:focus-visible, [role="combobox"]:focus-visible { outline:2px solid #6ce4dc; outline-offset:2px; }
-    [data-testid="stCaptionContainer"] { color:#a5b8c8; }
-    @media (max-width: 760px) {
-      .orbit-hero { padding:1rem; }
-      .orbit-hero h1 { font-size:1.55rem; }
-      .orbit-topbar { align-items:flex-start; flex-direction:column; gap:.4rem; }
-      .cc-sub { font-size:10px; line-height:1.5; }
-      .cc-muted { font-size:12px; line-height:1.5; }
-      .cc-label { font-size:11px; }
-      .cc-agent { font-size:12px; }
+    :root {
+      --orbit-bg: #f3f5f7;
+      --orbit-surface: #ffffff;
+      --orbit-ink: #172633;
+      --orbit-muted: #637586;
+      --orbit-line: #e0e6eb;
+      --orbit-accent: #087e83;
+      --orbit-accent-soft: #e8f4f3;
+      --orbit-sidebar: #14232d;
+      --primary-color: #087e83;
+      --primaryColor: #087e83;
     }
-    hr { border-color:#203347; }
+    html, body, [class*="css"] { font-family: Inter, "Segoe UI", sans-serif; }
+    .stApp, [data-testid="stAppViewContainer"] { background:var(--orbit-bg); color:var(--orbit-ink); }
+    [data-testid="stHeader"] { background:rgba(243,245,247,.92); }
+    [data-testid="stMain"] > div { padding-top:1.6rem; }
+    [data-testid="stSidebar"] { background:var(--orbit-sidebar); border-right:1px solid #263944; }
+    [data-testid="stSidebar"] > div:first-child { padding-top:1.3rem; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"],
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] { color:#bdc9d1; }
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] { color:#98aab6; }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label { color:#e4ebef; }
+    .orbit-brand { font:800 1.65rem 'Segoe UI',sans-serif; letter-spacing:.18em; color:#48b8ad; }
+    .orbit-kicker { color:var(--orbit-muted); font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; }
+    [data-testid="stSidebar"] .orbit-kicker { color:#91a5b2; }
+    .orbit-topbar { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.7rem 1rem; margin-bottom:1rem; background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:10px; color:var(--orbit-muted); font-size:.72rem; letter-spacing:.06em; }
+    .orbit-topbar b { color:var(--orbit-accent); }
+    .orbit-hero { position:relative; overflow:hidden; background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:14px; padding:1.5rem 1.65rem; margin:.2rem 0 1rem; box-shadow:0 8px 26px rgba(24,43,56,.045); }
+    .orbit-hero h1 { font:700 1.85rem 'Segoe UI',sans-serif; margin:.45rem 0 .45rem; color:var(--orbit-ink); letter-spacing:-.025em; }
+    .orbit-hero p { color:var(--orbit-muted); margin:0; max-width:760px; line-height:1.65; }
+    .orbit-pill { display:inline-block; border:1px solid #cce5e2; color:#176d6c; background:var(--orbit-accent-soft); border-radius:999px; padding:.3rem .65rem; font-size:.66rem; font-weight:700; letter-spacing:.08em; }
+    .orbit-panel { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:12px; padding:1rem; min-height:120px; }
+    .orbit-panel-title { color:var(--orbit-muted); font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+    .orbit-glow { color:var(--orbit-accent); }
+    div.stButton > button, div.stFormSubmitButton > button { border-radius:8px; min-height:2.55rem; font-weight:600; transition:background-color .16s ease, border-color .16s ease, transform .16s ease; }
+    button[data-testid*="BaseButton-primary"] { background:var(--orbit-accent) !important; border:1px solid var(--orbit-accent) !important; color:white !important; }
+    button[data-testid*="BaseButton-primary"]:hover { background:#066d71 !important; border-color:#066d71 !important; color:white !important; transform:translateY(-1px); }
+    button[data-testid*="BaseButton-secondary"] { border:1px solid var(--orbit-line) !important; background:var(--orbit-surface) !important; color:var(--orbit-ink) !important; }
+    div[data-testid="stMetric"] { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:10px; padding:.8rem .95rem; box-shadow:0 3px 12px rgba(24,43,56,.025); }
+    div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] * {
+      color:var(--orbit-muted) !important;
+    }
+    div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {
+      color:var(--orbit-ink) !important;
+    }
+    .stTabs [role="tablist"] { gap:.25rem; background:#e9edf0; border-radius:9px; padding:.25rem; }
+    .stTabs [role="tab"] { color:var(--orbit-muted) !important; border-radius:7px; }
+    .stTabs [role="tab"][aria-selected="true"] { background:var(--orbit-surface); color:var(--orbit-accent) !important; box-shadow:0 1px 3px rgba(24,43,56,.08); }
+    [data-testid="stExpander"] { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:9px; }
+    [data-testid="stVerticalBlockBorderWrapper"] { background:var(--orbit-surface); border-color:var(--orbit-line); border-radius:12px; }
+    [data-testid="stForm"] { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:10px; padding:1rem; }
+    .st-key-auth-card,
+    .st-key-command-agents-card,
+    .st-key-command-case-card,
+    .st-key-command-inspector-card,
+    .st-key-command-queue-card,
+    .st-key-command-risk-card,
+    .st-key-command-governance-card {
+      background:var(--orbit-surface);
+      border:1px solid var(--orbit-line);
+      border-radius:11px;
+      padding:.85rem;
+    }
+    [data-testid="stWidgetLabel"] { color:var(--orbit-ink) !important; }
+    [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * { color:var(--orbit-muted) !important; }
+    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"], .stNumberInput input {
+      background:var(--orbit-surface); color:var(--orbit-ink); border-color:#cdd7de; border-radius:7px;
+    }
+    [data-testid="stSelectbox"] [role="combobox"] {
+      background:var(--orbit-surface) !important;
+      color:var(--orbit-ink) !important;
+      border:1px solid #cdd7de !important;
+      border-radius:7px;
+    }
+    [data-testid="stSelectbox"] [role="combobox"] * { color:var(--orbit-ink) !important; }
+    [data-baseweb="popover"] { background:var(--orbit-surface); border:1px solid var(--orbit-line); }
+    [data-baseweb="popover"] [role="option"] { color:var(--orbit-ink) !important; }
+    .stTextInput input::placeholder, .stTextArea textarea::placeholder { color:#718293; opacity:1; }
+    input[type="checkbox"], input[type="radio"] { accent-color:var(--orbit-accent); }
+    [data-testid="stRadioOption"][data-selected="true"] > div > div:first-child {
+      background:var(--orbit-accent) !important;
+      border-color:var(--orbit-accent) !important;
+    }
+    [data-testid="stAlert"] { border:1px solid var(--orbit-line); }
+    [data-testid="stAlert"] p { color:var(--orbit-ink) !important; }
+    [data-testid="stAlertContainer"] { border-radius:9px; }
+    [data-testid="stAlertContentInfo"] { background:#edf4f7 !important; }
+    [data-testid="stAlertContentSuccess"] { background:#edf6f1 !important; }
+    [data-testid="stAlertContentWarning"] { background:#fff6e8 !important; }
+    [data-testid="stAlertContentError"] { background:#fff0f0 !important; }
+    [data-testid="stBottom"] { background:rgba(243,245,247,.97); border-top:1px solid var(--orbit-line); }
+    [data-testid="stBottom"] > div { background:var(--orbit-bg) !important; }
+    [data-testid="stBottomBlockContainer"] { background:transparent; }
+    [data-testid="stChatInputTextArea"] {
+      background:var(--orbit-surface) !important;
+      color:var(--orbit-ink) !important;
+      border:1px solid #cdd7de !important;
+      border-radius:8px;
+    }
+    [data-testid="stChatInput"] > div {
+      background:var(--orbit-surface) !important;
+      border:1px solid var(--orbit-line) !important;
+    }
+    [data-testid="stChatInputTextArea"]::placeholder { color:#718293; opacity:1; }
+    [data-testid="stChatInputSubmitButton"] {
+      background:var(--orbit-accent) !important;
+      color:white !important;
+      border-radius:7px;
+    }
+    code { color:#375267; background:#edf1f4; border-radius:4px; padding:.1rem .25rem; }
+    [data-testid="stDataFrame"], [data-testid="stTable"] { border:1px solid var(--orbit-line); border-radius:9px; overflow:hidden; }
+    [data-testid="stCaptionContainer"] { color:var(--orbit-muted); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, [role="combobox"]:focus-visible {
+      outline:2px solid #087e83; outline-offset:2px;
+    }
+    .auth-brand { color:var(--orbit-accent); font-size:.76rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
+    .auth-heading { margin:.75rem 0 .8rem; color:var(--orbit-ink); font-size:2.6rem; font-weight:700; line-height:1.12; letter-spacing:-.04em; }
+    .auth-copy { max-width:32rem; color:var(--orbit-muted); font-size:1rem; line-height:1.7; }
+    .auth-detail { margin-top:1.7rem; padding-top:1.2rem; border-top:1px solid var(--orbit-line); color:var(--orbit-muted); font-size:.88rem; line-height:1.7; }
+    .auth-card-title { margin:0; color:var(--orbit-ink); font-size:1.35rem; font-weight:700; letter-spacing:-.02em; }
+    .cc-top { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem 1.2rem; border:1px solid var(--orbit-line); border-radius:11px; background:var(--orbit-surface); margin-bottom:1rem; }
+    .cc-brand { font:800 19px 'Segoe UI',sans-serif; letter-spacing:4px; color:var(--orbit-accent); }
+    .cc-sub { font-size:11px; letter-spacing:1px; color:var(--orbit-muted); }
+    .cc-status { font-size:11px; color:#227c67; letter-spacing:.06em; }
+    .cc-panel { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:11px; padding:1rem; height:100%; min-height:150px; }
+    .cc-label { font-size:11px; letter-spacing:.08em; color:var(--orbit-muted); text-transform:uppercase; font-weight:700; margin-bottom:9px; }
+    .cc-big { font:700 24px 'Segoe UI',sans-serif; color:var(--orbit-ink); }
+    .cc-muted { font-size:12px; color:var(--orbit-muted); line-height:1.55; }
+    .cc-chip { display:inline-block; border:1px solid #cce5e2; background:var(--orbit-accent-soft); border-radius:20px; padding:4px 8px; color:#176d6c; font-size:10px; margin:3px; }
+    .cc-agent { display:flex; justify-content:space-between; gap:8px; border-bottom:1px solid #edf0f2; padding:8px 0; font-size:12px; color:var(--orbit-ink); }
+    .cc-kpi { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:9px; padding:11px 13px; height:100%; }
+    .cc-kpi small { font-size:10px; letter-spacing:.08em; color:var(--orbit-muted); }
+    .cc-kpi b { display:block; font:700 18px 'Segoe UI',sans-serif; color:var(--orbit-ink); margin-top:3px; white-space:nowrap; }
+    @media (max-width: 760px) {
+      [data-testid="stMain"] > div { padding:1rem .75rem 2rem; }
+      [data-testid="stHorizontalBlock"] { flex-wrap:wrap; gap:.65rem; }
+      [data-testid="stHorizontalBlock"] > [data-testid="column"] { flex:1 1 100%; min-width:100% !important; }
+      .orbit-hero { padding:1.1rem; }
+      .orbit-hero h1 { font-size:1.5rem; }
+      .orbit-topbar, .cc-top { align-items:flex-start; flex-direction:column; gap:.45rem; }
+      .auth-heading { font-size:2rem; }
+      .cc-sub { font-size:10px; line-height:1.5; }
+    }
+    hr { border-color:var(--orbit-line); }
     </style>
     """,
     unsafe_allow_html=True,
@@ -106,40 +210,65 @@ if st.session_state.orbit_user and account is None:
     st.session_state.orbit_user = None
 
 if not st.session_state.orbit_user:
-    st.markdown('<div class="orbit-brand">ORBIT</div><div class="orbit-kicker">Decision intelligence · secure workspace</div>', unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    auth_left, auth_center, auth_right = st.columns([1, 1.15, 1])
-    with auth_center:
-        st.markdown('<div class="orbit-hero"><span class="orbit-pill">MISSION CONTROL ACCESS</span><h1>Welcome to ORBIT</h1><p>Sign in to investigate shipment claims, inspect agent reasoning and review evidence-backed decisions.</p></div>', unsafe_allow_html=True)
-        login_tab, signup_tab = st.tabs(["Sign in", "Create account"])
-        with login_tab:
-            with st.form("orbit_login_form"):
-                login_email = st.text_input("Email address", placeholder="you@example.com")
-                login_password = st.text_input("Password", type="password")
-                login_submit = st.form_submit_button("Enter ORBIT", type="primary", width="stretch")
-            if login_submit:
-                account = authenticate_user(login_email, login_password)
-                if account:
-                    st.session_state.orbit_user = account["email"]
-                    st.rerun()
-                else:
-                    st.error("Email or password is incorrect.")
-        with signup_tab:
-            with st.form("orbit_signup_form"):
-                signup_email = st.text_input("Email address", key="signup_email", placeholder="you@example.com")
-                signup_password = st.text_input("Password", type="password", key="signup_password", help="At least 8 characters")
-                signup_confirm = st.text_input("Confirm password", type="password")
-                signup_submit = st.form_submit_button("Create ORBIT account", type="primary", width="stretch")
-            if signup_submit:
-                if signup_password != signup_confirm:
-                    st.error("Passwords do not match.")
-                else:
-                    ok, message = register_user(signup_email, signup_password)
-                    (st.success if ok else st.error)(message)
-        st.caption(
-            "Accounts use locally stored salted password hashes. New sign-ups receive User access; "
-            "an administrator must promote an account from the project terminal."
+    auth_intro, auth_panel = st.columns([1.05, 1], gap="large")
+    with auth_intro:
+        st.markdown(
+            '<div class="auth-brand">ORBIT &nbsp; / &nbsp; Decision intelligence</div>'
+            '<div class="auth-heading">A clearer view of every claim.</div>'
+            '<div class="auth-copy">Bring shipment evidence, policy checks, and human decisions together in one thoughtful review workspace.</div>'
+            '<div class="auth-detail"><b>Evidence before action</b><br>'
+            'Local records and policy guidance stay visible throughout the review.<br><br>'
+            '<b>Human-led decisions</b><br>'
+            'Sensitive actions remain gated and are recorded for review.</div>',
+            unsafe_allow_html=True,
         )
+    with auth_panel:
+        with st.container(border=True, key="auth-card"):
+            st.markdown(
+                '<div class="auth-card-title">Welcome to ORBIT</div>'
+                '<div class="cc-muted">Sign in or create an account to continue.</div>',
+                unsafe_allow_html=True,
+            )
+            login_tab, signup_tab = st.tabs(["Sign in", "Create account"])
+            with login_tab:
+                with st.form("orbit_login_form"):
+                    login_email = st.text_input("Email address", placeholder="you@example.com")
+                    login_password = st.text_input(
+                        "Password",
+                        type="password",
+                    )
+                    login_submit = st.form_submit_button("Enter ORBIT", type="primary", width="stretch")
+                if login_submit:
+                    account = authenticate_user(login_email, login_password)
+                    if account:
+                        st.session_state.orbit_user = account["email"]
+                        st.rerun()
+                    else:
+                        st.error("Email or password is incorrect.")
+            with signup_tab:
+                with st.form("orbit_signup_form"):
+                    signup_email = st.text_input("Email address", key="signup_email", placeholder="you@example.com")
+                    signup_password = st.text_input(
+                        "Password",
+                        type="password",
+                        key="signup_password",
+                        help="Use at least 8 characters.",
+                    )
+                    signup_confirm = st.text_input(
+                        "Confirm password",
+                        type="password",
+                    )
+                    signup_submit = st.form_submit_button("Create ORBIT account", type="primary", width="stretch")
+                if signup_submit:
+                    if signup_password != signup_confirm:
+                        st.error("Passwords do not match.")
+                    else:
+                        ok, message = register_user(signup_email, signup_password)
+                        (st.success if ok else st.error)(message)
+            st.caption(
+                "Passwords are stored as salted hashes in the local account database. "
+                "New accounts receive User access; an administrator can promote an account."
+            )
     st.stop()
 
 user_email = account["email"]
@@ -382,81 +511,193 @@ if selected_page == "Command Center":
     completed = sum(x.get("status") == "completed" for x in all_runs)
     awaiting = sum(x.get("status") == "awaiting_approval" for x in all_runs)
     failed = sum(x.get("status") == "failed" for x in all_runs)
-    st.markdown("""
-    <style>
-    .cc-top{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:1px solid #254257;border-radius:10px;background:linear-gradient(100deg,#101e2d,#11182a);margin-bottom:10px}
-    .cc-brand{font:800 19px 'Segoe UI',sans-serif;letter-spacing:5px;color:#66e3dc}.cc-sub{font-size:11px;letter-spacing:1.5px;color:#a8bac9}
-    .cc-status{font-size:11px;color:#73e6c2;letter-spacing:1px}.cc-panel{background:linear-gradient(145deg,#101e2c,#0b1420);border:1px solid #243b50;border-radius:10px;padding:14px;height:100%;min-height:150px}
-    .cc-label{font-size:11px;letter-spacing:1.2px;color:#a8bac9;text-transform:uppercase;font-weight:700;margin-bottom:9px}.cc-big{font:700 24px 'Segoe UI',sans-serif;color:#edf7fc}.cc-muted{font-size:12px;color:#a8bac9}.cc-chip{display:inline-block;border:1px solid #31536a;background:#102839;border-radius:20px;padding:4px 8px;color:#8de8df;font-size:10px;margin:3px}
-    .cc-agent{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #203448;padding:7px 0;font-size:12px;color:#dceaf2}.cc-dot{color:#62dfc7}.cc-node{fill:#102d3a;stroke:#43d6d0;stroke-width:2}.cc-link{stroke:#315b70;stroke-width:2;fill:none}.cc-center{fill:#162b45;stroke:#9c83ff;stroke-width:2}
-    .cc-kpi{background:#101e2c;border:1px solid #243b50;border-radius:9px;padding:9px 12px}.cc-kpi small{font-size:10px;letter-spacing:1px;color:#a8bac9}.cc-kpi b{display:block;font:700 21px 'Segoe UI',sans-serif;color:#e9f6fb;margin-top:2px}
-    </style>
-    <div class="cc-top"><div><div class="cc-brand">ORBIT</div><div class="cc-sub">MULTI-AGENT DECISION INTELLIGENCE / COMMAND CENTER</div></div><div class="cc-status">● LOCAL SYSTEM · SIMULATION MODE</div></div>
-    """, unsafe_allow_html=True)
-    k=st.columns(5)
+    st.markdown(
+        '<div class="cc-top"><div><div class="cc-brand">ORBIT</div>'
+        '<div class="cc-sub">DECISION INTELLIGENCE / COMMAND CENTER</div></div>'
+        '<div class="cc-status">● LOCAL SYSTEM · ADAPTIVE MODE · SIMULATION</div></div>',
+        unsafe_allow_html=True,
+    )
+    k = st.columns(4)
     claim_label = "CLAIMS PROCESSED" if is_admin else "MY CLAIMS"
-    for col,label,value in zip(k,[claim_label,"COMPLETED","HUMAN REVIEW","FAILED RUNS","AGENT MODE"],[total,completed,awaiting,failed,"ADAPTIVE"]):
-        col.markdown(f'<div class="cc-kpi"><small>{label}</small><b>{value}</b></div>',unsafe_allow_html=True)
+    for col, label, value in zip(
+        k,
+        [claim_label, "COMPLETED", "HUMAN REVIEW", "FAILED RUNS"],
+        [total, completed, awaiting, failed],
+    ):
+        col.markdown(
+            f'<div class="cc-kpi"><small>{label}</small><b>{value}</b></div>',
+            unsafe_allow_html=True,
+        )
     st.markdown("<div style='height:8px'></div>",unsafe_allow_html=True)
-    left,center,right=st.columns([1.05,1.45,1.05],gap="small")
+    left, center, right = st.columns([1.05, 1.4, 1.05], gap="small")
     with left:
-        st.markdown('<div class="cc-panel"><div class="cc-label">◈ Agent network / execution map</div>',unsafe_allow_html=True)
-        statuses={}
-        if selected_run:
-            for ev in selected_run.get("events",[]): statuses[ev.get("agent","Agent")]=ev.get("status","completed")
-        agent_names=["Research Agent","Analysis Agent","Validation Agent","Action Agent"]
-        for name in agent_names:
-            status=next((v for k,v in statuses.items() if name.lower() in k.lower()),"idle")
-            color={"completed":"#62dfc7","running":"#f2b45f","failed":"#ff7185","idle":"#71869a"}.get(status,"#71869a")
-            st.markdown(f'<div class="cc-agent"><span>{name.removesuffix(" Agent")}</span><span style="color:{color}">● {status.upper()}</span></div>',unsafe_allow_html=True)
-        st.markdown('<div class="cc-muted" style="padding-top:8px">Statuses come from saved workflow events. Debate and support scoring are derived from those results, not separate live agents.</div></div>',unsafe_allow_html=True)
+        with st.container(border=True, key="command-agents-card"):
+            st.markdown(
+                '<div class="cc-label">Agent network / execution map</div>',
+                unsafe_allow_html=True,
+            )
+            statuses = {}
+            if selected_run:
+                for event in selected_run.get("events", []):
+                    statuses[event.get("agent", "Agent")] = event.get(
+                        "status", "completed"
+                    )
+            agent_names = [
+                "Research Agent",
+                "Analysis Agent",
+                "Validation Agent",
+                "Action Agent",
+            ]
+            for name in agent_names:
+                status = next(
+                    (
+                        value
+                        for agent, value in statuses.items()
+                        if name.lower() in agent.lower()
+                    ),
+                    "idle",
+                )
+                color = {
+                    "completed": "#227c67",
+                    "running": "#a96b15",
+                    "failed": "#bd4054",
+                    "idle": "#758494",
+                }.get(status, "#758494")
+                st.markdown(
+                    f'<div class="cc-agent"><span>{name.removesuffix(" Agent")}</span>'
+                    f'<span style="color:{color}">● {status.upper()}</span></div>',
+                    unsafe_allow_html=True,
+                )
+            st.markdown(
+                '<div class="cc-muted" style="padding-top:8px">'
+                "Statuses come from saved workflow events. Debate and support scoring "
+                "are derived from those results, not separate live agents.</div>",
+                unsafe_allow_html=True,
+            )
     with center:
-        st.markdown('<div class="cc-panel" style="text-align:center"><div class="cc-label">◎ ORBIT central command / case status</div>',unsafe_allow_html=True)
-        if selected_run:
-            st.markdown(f'<div class="cc-big">{selected_run["shipment_id"]}</div><div class="cc-muted">SELECTED SHIPMENT CLAIM</div><div style="margin:9px"><span class="cc-chip">{selected_run["status"].replace("_"," ").upper()}</span><span class="cc-chip">{(selected_run.get("decision") or "PENDING").upper()}</span></div>',unsafe_allow_html=True)
-            st.write(selected_run.get("recommendation") or "Workflow has not produced a recommendation yet.")
-            state=selected_run.get("state",{})
-            unc=state.get("uncertainty",{})
-            a,b,c=st.columns(3)
-            a.metric("Support",f'{unc.get("decision_support_score","—")}{"/100" if unc.get("decision_support_score") is not None else ""}')
-            b.metric("Evidence",f'{unc.get("evidence_completeness","—")}{"%" if unc.get("evidence_completeness") is not None else ""}')
-            c.metric("Processing",f'{selected_run.get("processing_ms",0)} ms')
-        else:
-            st.markdown('<div class="cc-big" style="padding:22px 0">READY FOR INVESTIGATION</div><div class="cc-muted">No claim runs are stored yet.</div>',unsafe_allow_html=True)
-            st.info("Open Claim Workspace to submit a shipment claim. The live case visualization will appear here after the run.")
-        st.markdown('</div>',unsafe_allow_html=True)
+        with st.container(border=True, key="command-case-card"):
+            st.markdown(
+                '<div class="cc-label">ORBIT central command / case status</div>',
+                unsafe_allow_html=True,
+            )
+            if selected_run:
+                st.markdown(
+                    f'<div class="cc-big">{selected_run["shipment_id"]}</div>'
+                    '<div class="cc-muted">SELECTED SHIPMENT CLAIM</div>'
+                    f'<div style="margin:9px"><span class="cc-chip">'
+                    f'{selected_run["status"].replace("_", " ").upper()}</span>'
+                    f'<span class="cc-chip">'
+                    f'{(selected_run.get("decision") or "PENDING").upper()}</span></div>',
+                    unsafe_allow_html=True,
+                )
+                st.write(
+                    selected_run.get("recommendation")
+                    or "Workflow has not produced a recommendation yet."
+                )
+                state = selected_run.get("state", {})
+                uncertainty = state.get("uncertainty", {})
+                support_score = uncertainty.get("decision_support_score")
+                evidence_score = uncertainty.get("evidence_completeness")
+                support_value = f"{support_score}/100" if support_score is not None else "—"
+                evidence_value = f"{evidence_score}%" if evidence_score is not None else "—"
+                support_column, evidence_column, processing_column = st.columns(3)
+                support_column.metric("Support", support_value)
+                evidence_column.metric("Evidence", evidence_value)
+                processing_column.metric(
+                    "Processing", f'{selected_run.get("processing_ms", 0)} ms'
+                )
+            else:
+                st.markdown(
+                    '<div class="cc-big" style="padding:22px 0">'
+                    "Ready for investigation</div>"
+                    '<div class="cc-muted">No claim runs are stored yet.</div>',
+                    unsafe_allow_html=True,
+                )
+                st.info(
+                    "Open Claim Workspace to submit a shipment claim. "
+                    "The case view will appear here after the run."
+                )
     with right:
-        st.markdown('<div class="cc-panel"><div class="cc-label">▣ Decision inspector</div>',unsafe_allow_html=True)
-        if selected_run:
-            st.markdown(f'<div class="cc-muted">SHIPMENT</div><b>{selected_run["shipment_id"]}</b>',unsafe_allow_html=True)
-            st.markdown(f'<div class="cc-muted" style="margin-top:9px">WORKFLOW STATUS</div><b>{selected_run["status"].replace("_"," ").title()}</b>',unsafe_allow_html=True)
-            st.markdown(f'<div class="cc-muted" style="margin-top:9px">PREPARED ACTION</div><b>{(selected_run.get("action_type") or "Not prepared").replace("_"," ").title()}</b>',unsafe_allow_html=True)
-            st.markdown(f'<div class="cc-muted" style="margin-top:9px">AUDIT EVENTS</div><b>{len(selected_run.get("audit",[]))}</b>',unsafe_allow_html=True)
-            if selected_run.get("status")=="awaiting_approval": st.warning("Human approval required")
-        else:
-            st.markdown("<div class='cc-muted'>No selected case yet. Claim details and evidence will appear in this inspector.</div>",unsafe_allow_html=True)
-        st.markdown('</div>',unsafe_allow_html=True)
-    st.markdown("<div style='height:8px'></div>",unsafe_allow_html=True)
-    lower_left,lower_mid,lower_right=st.columns([1,1.15,1],gap="small")
+        with st.container(border=True, key="command-inspector-card"):
+            st.markdown(
+                '<div class="cc-label">Decision inspector</div>',
+                unsafe_allow_html=True,
+            )
+            if selected_run:
+                st.markdown(
+                    f'<div class="cc-muted">SHIPMENT</div><b>{selected_run["shipment_id"]}</b>'
+                    f'<div class="cc-muted" style="margin-top:9px">WORKFLOW STATUS</div>'
+                    f'<b>{selected_run["status"].replace("_", " ").title()}</b>'
+                    f'<div class="cc-muted" style="margin-top:9px">PREPARED ACTION</div>'
+                    f'<b>{(selected_run.get("action_type") or "Not prepared").replace("_", " ").title()}</b>'
+                    f'<div class="cc-muted" style="margin-top:9px">AUDIT EVENTS</div>'
+                    f'<b>{len(selected_run.get("audit", []))}</b>',
+                    unsafe_allow_html=True,
+                )
+                if selected_run.get("status") == "awaiting_approval":
+                    st.warning("Human approval required")
+            else:
+                st.markdown(
+                    "<div class='cc-muted'>Claim details and evidence will appear here "
+                    "after the first investigation.</div>",
+                    unsafe_allow_html=True,
+                )
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    lower_left, lower_mid, lower_right = st.columns(
+        [1, 1.15, 1], gap="small"
+    )
     with lower_left:
-        st.markdown('<div class="cc-panel"><div class="cc-label">▤ Mission queue / recent claims</div>',unsafe_allow_html=True)
-        if all_runs:
-            for item in all_runs[:5]:
-                st.markdown(f'<div class="cc-agent"><span>{item["shipment_id"]}<br><small style="color:#849bad">{item.get("created_at","")[:16].replace("T"," ")}</small></span><span>{item.get("status","").replace("_"," ").upper()}</span></div>',unsafe_allow_html=True)
-        else: st.caption("No claims processed yet.")
-        st.markdown('</div>',unsafe_allow_html=True)
+        with st.container(border=True, key="command-queue-card"):
+            st.markdown(
+                '<div class="cc-label">Mission queue / recent claims</div>',
+                unsafe_allow_html=True,
+            )
+            if all_runs:
+                for item in all_runs[:5]:
+                    st.markdown(
+                        f'<div class="cc-agent"><span>{item["shipment_id"]}<br>'
+                        f'<small>{item.get("created_at", "")[:16].replace("T", " ")}</small></span>'
+                        f'<span>{item.get("status", "").replace("_", " ").upper()}</span></div>',
+                        unsafe_allow_html=True,
+                    )
+            else:
+                st.caption("No claims processed yet.")
     with lower_mid:
-        st.markdown('<div class="cc-panel"><div class="cc-label">⌬ Decision support / risk dimensions</div>',unsafe_allow_html=True)
-        if selected_run:
-            comp=selected_run.get("state",{}).get("uncertainty",{}).get("components",{})
-            if comp: st.bar_chart({"Support dimension":comp},height=170)
-            else: st.caption("Support dimensions appear after uncertainty assessment.")
-        else: st.caption("Risk visualization populates from the selected claim assessment.")
-        st.markdown('</div>',unsafe_allow_html=True)
+        with st.container(border=True, key="command-risk-card"):
+            st.markdown(
+                '<div class="cc-label">Decision support / risk dimensions</div>',
+                unsafe_allow_html=True,
+            )
+            if selected_run:
+                components = (
+                    selected_run.get("state", {})
+                    .get("uncertainty", {})
+                    .get("components", {})
+                )
+                if components:
+                    st.bar_chart({"Support dimension": components}, height=170)
+                else:
+                    st.caption(
+                        "Support dimensions appear after uncertainty assessment."
+                    )
+            else:
+                st.caption(
+                    "Risk visualization populates from the selected claim assessment."
+                )
     with lower_right:
-        st.markdown('<div class="cc-panel"><div class="cc-label">⌁ Workflow signals / governance</div>',unsafe_allow_html=True)
-        st.markdown(f'<div class="cc-agent"><span>Completed reviews</span><b>{completed}</b></div><div class="cc-agent"><span>Awaiting approval</span><b>{awaiting}</b></div><div class="cc-agent"><span>Failed workflows</span><b>{failed}</b></div><div class="cc-agent"><span>Safety mode</span><b style="color:#62dfc7">HUMAN GATED</b></div>',unsafe_allow_html=True)
-        st.markdown('</div>',unsafe_allow_html=True)
+        with st.container(border=True, key="command-governance-card"):
+            st.markdown(
+                '<div class="cc-label">Workflow signals / governance</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="cc-agent"><span>Completed reviews</span><b>{completed}</b></div>'
+                f'<div class="cc-agent"><span>Awaiting approval</span><b>{awaiting}</b></div>'
+                f'<div class="cc-agent"><span>Failed workflows</span><b>{failed}</b></div>'
+                '<div class="cc-agent"><span>Safety mode</span>'
+                '<b style="color:#227c67">Human gated</b></div>',
+                unsafe_allow_html=True,
+            )
     st.markdown("<div style='height:7px'></div>",unsafe_allow_html=True)
     if all_runs:
         labels=[f'{x["shipment_id"]} · {x["status"].replace("_"," ")}' for x in all_runs]
@@ -516,11 +757,11 @@ with st.expander("Evaluation dashboard", expanded=False):
 st.markdown("### Mission console")
 network_left, network_center, network_right = st.columns([1, 1.25, 1])
 with network_left:
-    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">◈ Agent network</div><h3 class="orbit-glow">ORCHESTRATOR</h3><p>Research → Analysis → Validation</p><small style="color:#8297aa">Investigation and debate activate when evidence is incomplete or conflicting.</small></div>', unsafe_allow_html=True)
+    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">Agent network</div><h3 class="orbit-glow">Orchestrator</h3><p>Research → Analysis → Validation</p><small class="cc-muted">Investigation and debate activate when evidence is incomplete or conflicting.</small></div>', unsafe_allow_html=True)
 with network_center:
-    st.markdown('<div class="orbit-panel" style="text-align:center"><div class="orbit-panel-title">◉ Central command</div><h2 style="font-family:Segoe UI;color:#eaf7fb">Investigate a claim</h2><p style="color:#a5b8c8">Select a shipment below, add the complaint and launch the workflow.</p><span class="orbit-pill">EVIDENCE-FIRST DECISIONS</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="orbit-panel" style="text-align:center"><div class="orbit-panel-title">Central command</div><h2>Investigate a claim</h2><p>Select a shipment, add the complaint, and launch the workflow.</p><span class="orbit-pill">EVIDENCE-FIRST DECISIONS</span></div>', unsafe_allow_html=True)
 with network_right:
-    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">◎ Governance inspector</div><h3 style="color:#f2b76c">Human oversight</h3><p>Approval gates · audit trail · uncertainty routing</p><small style="color:#8297aa">No simulated action executes without a recorded reviewer decision.</small></div>', unsafe_allow_html=True)
+    st.markdown('<div class="orbit-panel"><div class="orbit-panel-title">Governance inspector</div><h3 class="orbit-glow">Human oversight</h3><p>Approval gates · audit trail · uncertainty routing</p><small class="cc-muted">No simulated action executes without a recorded reviewer decision.</small></div>', unsafe_allow_html=True)
 
 st.subheader("Start a claim review")
 st.caption(
