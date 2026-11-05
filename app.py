@@ -3,11 +3,21 @@
 from __future__ import annotations
 
 import sqlite3
+from html import escape as html_escape
 from typing import Any
 
 import streamlit as st
 
-from auth import authenticate_user, get_user, initialize_auth_database, register_user
+from auth import (
+    authenticate_user,
+    get_theme_preference,
+    get_user,
+    initialize_auth_database,
+    list_users,
+    promote_user_to_admin_by_admin,
+    register_user,
+    set_theme_preference,
+)
 from evaluation import run_evaluation
 from local_rag import (
     LocalModelError,
@@ -38,6 +48,310 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+THEME_MODES = ("System", "Light", "Dark")
+_theme_from_url = str(st.query_params.get("theme", "system")).title()
+if _theme_from_url not in THEME_MODES:
+    _theme_from_url = "System"
+st.session_state.setdefault("orbit_theme", _theme_from_url)
+st.session_state["orbit_theme_selector"] = st.session_state["orbit_theme"]
+
+
+def _save_theme_preference() -> None:
+    theme = st.session_state["orbit_theme_selector"]
+    st.session_state["orbit_theme"] = theme
+    st.session_state.pop("orbit_theme_error", None)
+    st.query_params["theme"] = theme.lower()
+    user_email = st.session_state.get("orbit_user")
+    if user_email:
+        try:
+            set_theme_preference(user_email, theme)
+        except (OSError, sqlite3.Error, ValueError) as error:
+            st.session_state["orbit_theme_error"] = str(error)
+
+
+def _theme_styles(theme: str) -> str:
+    dark_rules = """
+      :root {
+        color-scheme:dark;
+        --orbit-bg:#111b20;
+        --orbit-surface:#1a282e;
+        --orbit-ink:#e7efeb;
+        --orbit-muted:#a8b8b8;
+        --orbit-line:#34464b;
+        --orbit-accent:#76cfc0;
+        --orbit-accent-soft:#203d3b;
+        --orbit-sidebar:#111d24;
+        --orbit-input:#202f35;
+        --orbit-input-line:#4b6064;
+        --primary-color:#258d81;
+        --primaryColor:#258d81;
+      }
+      html, body, [class*="css"] { color-scheme:dark; }
+      .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+        background:var(--orbit-bg) !important;
+        color:var(--orbit-ink) !important;
+      }
+      [data-testid="stHeader"] { background:rgba(17,27,32,.96) !important; }
+      [data-testid="stMain"] > div { background:transparent !important; }
+      [data-testid="stSidebar"] {
+        background:var(--orbit-sidebar) !important;
+        border-color:#2b3d43 !important;
+      }
+      [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] p,
+      [data-testid="stMarkdownContainer"] li, [data-testid="stWidgetLabel"],
+      [data-testid="stWidgetLabel"] label, [data-testid="stRadio"] label,
+      [data-testid="stCheckbox"] label, [data-testid="stCaptionContainer"],
+      [data-testid="stCaptionContainer"] * {
+        color:var(--orbit-ink) !important;
+      }
+      [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {
+        color:var(--orbit-muted) !important;
+      }
+      [data-testid="stMain"] h1, [data-testid="stMain"] h2,
+      [data-testid="stMain"] h3, [data-testid="stMain"] h4 {
+        color:#edf3ef !important;
+      }
+      .orbit-kicker, .orbit-panel-title, .cc-label, .cc-muted,
+      .cc-sub, .cc-kpi small { color:var(--orbit-muted) !important; }
+      .orbit-topbar, .orbit-panel, .cc-top, .cc-panel, .cc-kpi,
+      .st-key-command-agents-card, .st-key-command-case-card,
+      .st-key-command-inspector-card, .st-key-command-queue-card,
+      .st-key-command-risk-card, .st-key-command-governance-card,
+      .st-key-claim-intake-card, .st-key-shipment-preview-card,
+      .st-key-claim-review-summary-card {
+        background:var(--orbit-surface) !important;
+        border-color:var(--orbit-line) !important;
+        color:var(--orbit-ink) !important;
+      }
+      .stApp:not(:has(.st-key-auth-home)) .orbit-topbar {
+        background:linear-gradient(110deg,#172b30,#1b302f) !important;
+        border-color:#39514f !important;
+        color:#d5e4de !important;
+      }
+      .orbit-topbar b, .orbit-glow, .cc-brand { color:var(--orbit-accent) !important; }
+      .orbit-hero {
+        background:linear-gradient(115deg,#192a2f 0%,#1d302f 100%) !important;
+        border-color:#35494b !important;
+        box-shadow:0 12px 30px rgba(0,0,0,.2) !important;
+      }
+      .orbit-hero h1 { color:#eff4ef !important; }
+      .orbit-hero p { color:#b5c4c0 !important; }
+      .orbit-pill, .cc-chip, .workspace-step {
+        background:#203d3b !important;
+        border-color:#365b54 !important;
+        color:#a5e0d1 !important;
+      }
+      .cc-agent { border-color:#314348 !important; color:var(--orbit-ink) !important; }
+      .cc-status { color:#9fe0c8 !important; }
+      .cc-mini-metrics > div {
+        background:#202f35 !important;
+        border-color:#40545a !important;
+      }
+      .cc-mini-metrics small { color:#aabbb7 !important; }
+      .cc-mini-metrics b { color:#e7efeb !important; }
+      div[data-testid="stMetric"] {
+        background:var(--orbit-surface) !important;
+        border-color:var(--orbit-line) !important;
+        box-shadow:0 4px 14px rgba(0,0,0,.14) !important;
+      }
+      div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] *,
+      div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {
+        color:var(--orbit-ink) !important;
+      }
+      .stTextInput input, .stTextArea textarea, .stNumberInput input,
+      [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea,
+      [data-testid="stNumberInput"] input, [data-testid="stDateInput"] input,
+      [data-testid="stTimeInput"] input, [data-testid="stSelectbox"] [role="combobox"],
+      [data-testid="stMultiSelect"] [role="combobox"],
+      [data-baseweb="select"] > div, [data-baseweb="input"] > div,
+      [data-baseweb="textarea"] {
+        background:var(--orbit-input) !important;
+        color:var(--orbit-ink) !important;
+        border-color:var(--orbit-input-line) !important;
+      }
+      input, textarea { color:var(--orbit-ink) !important; }
+      input::placeholder, textarea::placeholder { color:#9aabaa !important; opacity:1; }
+      [data-testid="stSelectbox"] [role="combobox"] *,
+      [data-testid="stMultiSelect"] [role="combobox"] * { color:var(--orbit-ink) !important; }
+      [data-testid="stSelectbox"] [role="group"],
+      [data-testid="stMultiSelect"] [role="group"] {
+        background:var(--orbit-input) !important;
+        color:var(--orbit-ink) !important;
+        border-color:var(--orbit-input-line) !important;
+      }
+      [data-baseweb="popover"], [data-baseweb="menu"], [role="listbox"],
+      [role="option"], [data-baseweb="popover"] li {
+        background:#1b2a30 !important;
+        color:var(--orbit-ink) !important;
+        border-color:var(--orbit-line) !important;
+      }
+      [role="option"]:hover, [role="option"][aria-selected="true"] {
+        background:#29433f !important;
+      }
+      button[data-testid*="BaseButton-secondary"],
+      div.stButton > button:not([data-testid*="BaseButton-primary"]),
+      div.stFormSubmitButton > button:not([data-testid*="BaseButton-primary"]) {
+        background:#202f35 !important;
+        border-color:#465b60 !important;
+        color:#e4eeea !important;
+      }
+      button[data-testid*="BaseButton-primary"] {
+        background:#197f76 !important;
+        border-color:#258d81 !important;
+        color:#fff !important;
+      }
+      button[data-testid*="BaseButton-primary"]:hover {
+        background:#219185 !important;
+        border-color:#3ba99a !important;
+      }
+      .stTabs [role="tablist"] { background:#202e33 !important; }
+      .stTabs [role="tab"] { color:#adbfbb !important; }
+      .stTabs [role="tab"][aria-selected="true"] {
+        background:#2a3a3f !important;
+        color:#9ce0d1 !important;
+      }
+      [data-testid="stExpander"], [data-testid="stVerticalBlockBorderWrapper"],
+      [data-testid="stForm"] {
+        background:var(--orbit-surface) !important;
+        border-color:var(--orbit-line) !important;
+        color:var(--orbit-ink) !important;
+      }
+      .st-key-claim-intake-card [data-testid="stForm"] {
+        background:transparent !important;
+        border:0 !important;
+      }
+      [data-testid="stAlert"] {
+        border-color:#435458 !important;
+        color:var(--orbit-ink) !important;
+      }
+      [data-testid="stAlert"] p { color:var(--orbit-ink) !important; }
+      [data-testid="stAlertContentInfo"], [data-testid="stAlertContentInfo"] * {
+        background:#1c3038 !important;
+        color:#c2dce7 !important;
+      }
+      [data-testid="stAlertContentSuccess"], [data-testid="stAlertContentSuccess"] * {
+        background:#1b342c !important;
+        color:#a6dfbf !important;
+      }
+      [data-testid="stAlertContentWarning"], [data-testid="stAlertContentWarning"] * {
+        background:#3a3020 !important;
+        color:#f1d9a4 !important;
+      }
+      [data-testid="stAlertContentError"], [data-testid="stAlertContentError"] * {
+        background:#3a2529 !important;
+        color:#f0b5bc !important;
+      }
+      [data-testid="stDataFrame"], [data-testid="stTable"],
+      [data-testid="stDataFrame"] > div, [data-testid="stTable"] > div {
+        background:var(--orbit-surface) !important;
+        border-color:var(--orbit-line) !important;
+      }
+      [data-testid="stVegaLiteChart"], [data-testid="stArrowVegaLiteChart"],
+      [data-testid="stPlotlyChart"] {
+        background:var(--orbit-surface) !important;
+        border-radius:8px;
+      }
+      [data-testid="stVegaLiteChart"] svg text,
+      [data-testid="stArrowVegaLiteChart"] svg text {
+        fill:#c0cfca !important;
+      }
+      .cc-agent span[style*="#227c67"] { color:#8dd8b8 !important; }
+      .cc-agent span[style*="#758494"] { color:#aab8b8 !important; }
+      [data-testid="stChatMessage"] {
+        background:#1a292f !important;
+        border-color:var(--orbit-line) !important;
+        color:var(--orbit-ink) !important;
+      }
+      [data-testid="stChatInput"] > div, [data-testid="stBottom"] {
+        background:#17252b !important;
+        border-color:var(--orbit-line) !important;
+      }
+      [data-testid="stChatInputTextArea"] {
+        background:var(--orbit-input) !important;
+        color:var(--orbit-ink) !important;
+      }
+      code { background:#26383d !important; color:#b5dbd2 !important; }
+      hr { border-color:var(--orbit-line) !important; }
+      [data-testid="stSidebar"] .orbit-brand { color:#65cbbb !important; }
+      [data-testid="stSidebar"] .orbit-kicker { color:#a5b8bc !important; }
+      .stApp:has(.st-key-auth-home) { background:#111b20 !important; }
+      .stApp:has(.st-key-auth-home) [data-testid="stMain"] > div { background:transparent !important; }
+      .stApp:has(.st-key-auth-home) .auth-nav { color:#e0eae5 !important; }
+      .stApp:has(.st-key-auth-home) .auth-nav-context,
+      .stApp:has(.st-key-auth-home) .auth-home-copy,
+      .stApp:has(.st-key-auth-home) .auth-points { color:#afbfbb !important; }
+      .stApp:has(.st-key-auth-home) .auth-home-heading { color:#edf4ef !important; }
+      .stApp:has(.st-key-auth-home) .auth-home-heading em { color:#82d8c8 !important; }
+      .stApp:has(.st-key-auth-home) .auth-eyebrow,
+      .stApp:has(.st-key-auth-home) .auth-access-kicker { color:#8dcdbf !important; }
+      .stApp:has(.st-key-auth-home) .st-key-auth-access-card {
+        background:#1a292e !important;
+        border-color:#35474b !important;
+        box-shadow:0 12px 35px rgba(0,0,0,.18) !important;
+      }
+      .stApp:has(.st-key-auth-home) .auth-access-title { color:#edf4ef !important; }
+      .stApp:has(.st-key-auth-home) .auth-access-copy,
+      .stApp:has(.st-key-auth-home) .auth-access-note { color:#b0bfbb !important; }
+      .stApp:has(.st-key-auth-home) .auth-access-note { border-color:#34464a !important; }
+      .stApp:has(.st-key-auth-home) .st-key-auth-access-card [data-testid="stRadio"] > div {
+        background:#233238 !important;
+      }
+      .stApp:has(.st-key-auth-home) .st-key-auth-access-card [data-testid="stRadioOption"] {
+        color:#bdcbc7 !important;
+      }
+      .stApp:has(.st-key-auth-home) .st-key-auth-access-card [data-testid="stRadioOption"][data-selected="true"] {
+        background:#34464a !important;
+        color:#a2e3d4 !important;
+      }
+      [data-testid="stRadio"] label:not(:has(input:checked)) > div > div:first-child {
+        background:#26363b !important;
+        border-color:#607579 !important;
+      }
+      [data-testid="stRadio"] label:not(:has(input:checked)) > div > div:first-child > div:first-child {
+        background:#26363b !important;
+      }
+      .stApp:has(.st-key-auth-home) .st-key-auth-nav-signin button,
+      .stApp:has(.st-key-auth-home) .st-key-auth-hero-signin button {
+        background:#1d2e33 !important;
+        border-color:#3a4e52 !important;
+        color:#e2ece7 !important;
+      }
+      .stApp:has(.st-key-auth-home) [data-testid="stWidgetLabel"],
+      .stApp:has(.st-key-auth-home) [data-testid="stWidgetLabel"] * {
+        color:#e3ece7 !important;
+      }
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-review-subtitle {
+        color:#687b7e !important;
+      }
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-review-top,
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-review-subtitle,
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-flow-state,
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-review-foot {
+        color:#687b7e !important;
+      }
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-flow-label,
+      .stApp:has(.st-key-auth-home) .auth-review-card .auth-review-title {
+        color:#243b3d !important;
+      }
+      .stApp:has(.st-key-auth-home) .st-key-auth-nav-row [data-testid="stSelectbox"] [role="combobox"],
+      .stApp:has(.st-key-auth-home) .st-key-auth-nav-row [data-testid="stSelectbox"] [role="combobox"] *,
+      .stApp:has(.st-key-auth-home) .st-key-auth-nav-row [data-baseweb="select"] > div {
+        background:#202f35 !important;
+        color:#e4eeea !important;
+        border-color:#465b60 !important;
+      }
+      .stApp:has(.st-key-auth-home) .auth-review-card { color:#1b3039 !important; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
+      }
+    """
+    if theme == "Dark":
+        return dark_rules
+    if theme == "System":
+        return "@media (prefers-color-scheme: dark) {" + dark_rules + "}"
+    return ""
+
+
 st.markdown(
     """
     <style>
@@ -65,6 +379,12 @@ st.markdown(
     [data-testid="stSidebar"] [data-testid="stRadio"] label { color:#e4ebef; }
     .orbit-brand { font:800 1.65rem 'Segoe UI',sans-serif; letter-spacing:.18em; color:#48b8ad; }
     .orbit-kicker { color:var(--orbit-muted); font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; }
+    .orbit-role-chip {
+      display:inline-flex; align-items:center; margin:.25rem 0 .45rem;
+      padding:.3rem .55rem; border:1px solid #335753; border-radius:999px;
+      background:#1b3b3b; color:#a5e0d1; font-size:.62rem;
+      font-weight:700; letter-spacing:.09em;
+    }
     [data-testid="stSidebar"] .orbit-kicker { color:#91a5b2; }
     .orbit-topbar { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.7rem 1rem; margin-bottom:1rem; background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:10px; color:var(--orbit-muted); font-size:.72rem; letter-spacing:.06em; }
     .orbit-topbar b { color:var(--orbit-accent); }
@@ -313,6 +633,25 @@ st.markdown(
       border-color:#5b827a !important;
       background:#214047 !important;
     }
+    @media (max-width: 1500px) {
+      .stApp:not(:has(.st-key-auth-home)) [data-testid="stHorizontalBlock"]:has(.st-key-command-agents-card),
+      .stApp:not(:has(.st-key-auth-home)) [data-testid="stHorizontalBlock"]:has(.st-key-command-queue-card) {
+        flex-wrap:wrap !important;
+      }
+      .stApp:not(:has(.st-key-auth-home)) [data-testid="stHorizontalBlock"]:has(.st-key-command-agents-card) > [data-testid="stColumn"],
+      .stApp:not(:has(.st-key-auth-home)) [data-testid="stHorizontalBlock"]:has(.st-key-command-queue-card) > [data-testid="stColumn"] {
+        flex:1 1 100% !important;
+        width:100% !important;
+        min-width:100% !important;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .stApp *, .stApp *::before, .stApp *::after {
+        scroll-behavior:auto !important;
+        animation-duration:.01ms !important;
+        transition-duration:.01ms !important;
+      }
+    }
     button:focus-visible, input:focus-visible, textarea:focus-visible, [role="combobox"]:focus-visible {
       outline:2px solid #087e83; outline-offset:2px;
     }
@@ -338,6 +677,13 @@ st.markdown(
       box-shadow:0 4px 12px rgba(19,46,54,.14);
     }
     .auth-nav-name { font-size:1.05rem; letter-spacing:.12em; }
+    .st-key-auth-nav-row [data-testid="stSelectbox"] [data-testid="stWidgetLabel"] {
+      font-size:.67rem;
+    }
+    .st-key-auth-nav-row [data-testid="stSelectbox"] [role="combobox"] {
+      min-height:2.55rem;
+      background:rgba(255,255,255,.72) !important;
+    }
     .auth-nav-context {
       margin-left:.45rem; padding-left:.9rem; border-left:1px solid #dfe5e2;
       color:#76858a; font-size:.77rem; font-weight:500; letter-spacing:0;
@@ -525,10 +871,14 @@ st.markdown(
     .cc-kpi { background:var(--orbit-surface); border:1px solid var(--orbit-line); border-radius:9px; padding:11px 13px; height:100%; }
     .cc-kpi small { font-size:10px; letter-spacing:.08em; color:var(--orbit-muted); }
     .cc-kpi b { display:block; font:700 18px 'Segoe UI',sans-serif; color:var(--orbit-ink); margin-top:3px; white-space:nowrap; }
+    .cc-mini-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.4rem; margin-top:.55rem; }
+    .cc-mini-metrics > div { min-width:0; padding:.55rem .45rem; border:1px solid #e0e7e2; border-radius:8px; background:#f7faf8; }
+    .cc-mini-metrics small { display:block; color:#637586; font-size:.58rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .cc-mini-metrics b { display:block; margin-top:.25rem; color:#20363b; font-size:.88rem; font-weight:700; white-space:nowrap; }
     @media (max-width: 760px) {
       [data-testid="stMain"] > div { padding:1rem .75rem 2rem; }
       [data-testid="stHorizontalBlock"] { flex-wrap:wrap; gap:.65rem; }
-      [data-testid="stHorizontalBlock"] > [data-testid="column"] { flex:1 1 100%; min-width:100% !important; }
+      [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] { flex:1 1 100%; min-width:100% !important; }
       .stApp:has(.st-key-auth-home) [data-testid="stMain"] > div { padding:0 .9rem 1.5rem; }
       .orbit-hero { padding:1.1rem; }
       .orbit-hero h1 { font-size:1.5rem; }
@@ -541,6 +891,9 @@ st.markdown(
       }
       .st-key-auth-nav-row [data-testid="stHorizontalBlock"] > .stColumn:last-child {
         min-width:0 !important; flex:0 0 5.2rem !important;
+      }
+      .st-key-auth-nav-row [data-testid="stHorizontalBlock"] > .stColumn:nth-child(2) {
+        min-width:0 !important; flex:0 0 5.4rem !important;
       }
       .auth-nav-context { display:none; }
       .auth-main { padding-top:.5rem; }
@@ -562,6 +915,10 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+_active_theme = st.session_state["orbit_theme"]
+_active_theme_css = _theme_styles(_active_theme)
+if _active_theme_css:
+    st.markdown(f"<style>{_active_theme_css}</style>", unsafe_allow_html=True)
 
 
 try:
@@ -590,7 +947,7 @@ if not st.session_state.orbit_user:
     st.session_state.setdefault("auth_mode", "Create account")
     with st.container(key="auth-home"):
         with st.container(key="auth-nav-row"):
-            nav_brand, nav_action = st.columns([5, 1], gap="small")
+            nav_brand, nav_theme, nav_action = st.columns([5, 1.55, 1], gap="small")
             with nav_brand:
                 st.markdown(
                     '<div class="auth-nav">'
@@ -602,6 +959,13 @@ if not st.session_state.orbit_user:
                     '<span class="auth-nav-context">Decision intelligence for shipment claims</span>'
                     '</div>',
                     unsafe_allow_html=True,
+                )
+            with nav_theme:
+                st.selectbox(
+                    "Theme",
+                    THEME_MODES,
+                    key="orbit_theme_selector",
+                    on_change=_save_theme_preference,
                 )
             with nav_action:
                 st.button(
@@ -695,6 +1059,8 @@ if not st.session_state.orbit_user:
                     label_visibility="collapsed",
                     key="auth_mode",
                 )
+                if theme_error := st.session_state.pop("orbit_theme_error", None):
+                    st.error(f"Could not save your appearance preference: {theme_error}")
                 if st.session_state["auth_mode"] == "Sign in":
                     with st.form("orbit_login_form"):
                         login_email = st.text_input(
@@ -714,6 +1080,20 @@ if not st.session_state.orbit_user:
                         account = authenticate_user(login_email, login_password)
                         if account:
                             st.session_state.orbit_user = account["email"]
+                            try:
+                                saved_theme = get_theme_preference(account["email"])
+                                if saved_theme:
+                                    st.session_state["orbit_theme"] = saved_theme
+                                else:
+                                    set_theme_preference(
+                                        account["email"],
+                                        st.session_state["orbit_theme"],
+                                    )
+                                st.query_params["theme"] = st.session_state[
+                                    "orbit_theme"
+                                ].lower()
+                            except (OSError, sqlite3.Error, ValueError) as error:
+                                st.session_state["orbit_theme_error"] = str(error)
                             st.rerun()
                         else:
                             st.error("Email or password is incorrect.")
@@ -747,6 +1127,14 @@ if not st.session_state.orbit_user:
                                 signup_email,
                                 signup_password,
                             )
+                            if ok:
+                                try:
+                                    set_theme_preference(
+                                        signup_email,
+                                        st.session_state["orbit_theme"],
+                                    )
+                                except (OSError, sqlite3.Error, ValueError) as error:
+                                    st.session_state["orbit_theme_error"] = str(error)
                             (st.success if ok else st.error)(message)
                 st.markdown(
                     '<div class="auth-access-note">Passwords are stored as salted hashes '
@@ -939,35 +1327,64 @@ def _render_local_assistant() -> None:
 
 with st.sidebar:
     st.markdown('<div class="orbit-brand">ORBIT</div>', unsafe_allow_html=True)
-    st.markdown('<div class="orbit-kicker">Local claim review workspace</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="orbit-kicker">Shipment claim operations</div>',
+        unsafe_allow_html=True,
+    )
     st.caption(f"Signed in: {user_email}")
-    st.caption(f"Role: {'Administrator' if is_admin else 'User'}")
+    st.markdown(
+        '<div class="orbit-role-chip">'
+        + ("ADMINISTRATOR" if is_admin else "PERSONAL WORKSPACE")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
     st.caption(
-        "You can review every claim."
-        if is_admin else "You can review and manage only the claims you submit."
+        "Organization-wide claims, approvals, and account access."
+        if is_admin else "Your submissions, recommendations, and review history."
     )
     if st.button("Sign out", width="stretch"):
         st.session_state.orbit_user = None
         st.rerun()
+    st.selectbox(
+        "Appearance",
+        THEME_MODES,
+        key="orbit_theme_selector",
+        on_change=_save_theme_preference,
+    )
+    if theme_error := st.session_state.pop("orbit_theme_error", None):
+        st.error(f"Could not save your appearance preference: {theme_error}")
     st.divider()
-    st.markdown("**NAVIGATION**")
+    st.markdown("**ADMIN NAVIGATION**" if is_admin else "**YOUR WORKSPACE**")
+    page_labels = (
+        {
+            "Command Center": "Admin Dashboard",
+            "Claim Workspace": "Claims & Approvals",
+            "AI Assistant": "AI Assistant",
+            "User Management": "User Access",
+        }
+        if is_admin else {
+            "Command Center": "My Dashboard",
+            "Claim Workspace": "New Claim",
+            "AI Assistant": "AI Assistant",
+        }
+    )
+    page_options = ["Command Center", "Claim Workspace", "AI Assistant"]
+    if is_admin:
+        page_options.append("User Management")
+    if st.session_state.get("orbit_page") not in page_options:
+        st.session_state["orbit_page"] = page_options[0]
     orbit_page = st.radio(
         "Workspace",
-        ["Command Center", "Claim Workspace", "AI Assistant"],
+        page_options,
         index=0,
+        format_func=page_labels.__getitem__,
         label_visibility="collapsed",
         key="orbit_page",
     )
-    st.divider()
-    st.markdown("**MISSION WORKFLOW**")
-    for name, detail in (
-        ("01  Research", "Retrieve simulated shipment and policy evidence"),
-        ("02  Analysis", "Check evidence, documents, and policy thresholds"),
-        ("03  Validation", "Cross-check recommendation against evidence"),
-        ("04  Action", "Prepare a gated next step"),
-    ):
-        st.markdown(f"**{name}**")
-        st.caption(detail)
+    if is_admin:
+        st.caption("Review claims, approvals, and account access across the organization.")
+    else:
+        st.caption("Only claims submitted by your account appear in your workspace.")
     st.divider()
     st.markdown("**SYSTEM STATUS**")
     st.success("Local demo data · no carrier integration")
@@ -979,6 +1396,95 @@ with st.sidebar:
 # Dedicated, at-a-glance visual command center. All operational counts and
 # selected-case details below are read from persisted SQLite workflow records.
 selected_page = st.session_state.get("orbit_page", "Command Center")
+if selected_page == "User Management":
+    if not is_admin:
+        st.error("Administrator access is required to manage account access.")
+        st.stop()
+
+    st.markdown(
+        '<div class="orbit-topbar"><span><b>ORBIT / USER ACCESS</b></span>'
+        '<span>ADMINISTRATION · <b>● ACCESS CONTROL</b></span></div>',
+        unsafe_allow_html=True,
+    )
+    st.title("User access")
+    st.caption(
+        "Review registered accounts and grant administrator access when needed. "
+        "Role changes are verified against the signed-in account."
+    )
+    if message := st.session_state.pop("orbit_admin_success", None):
+        st.success(message)
+
+    try:
+        accounts = list_users(user_email)
+    except PermissionError as error:
+        st.error(str(error))
+        st.stop()
+    except (OSError, sqlite3.Error) as error:
+        st.error(f"Could not load account access: {error}")
+        st.stop()
+
+    admins = sum(account["role"] == "admin" for account in accounts)
+    users = len(accounts) - admins
+    metric_admin, metric_users, metric_total = st.columns(3)
+    metric_admin.metric("Administrators", admins)
+    metric_users.metric("Regular users", users)
+    metric_total.metric("Registered accounts", len(accounts))
+
+    st.subheader("Account directory")
+    search = st.text_input("Search accounts", placeholder="Filter by email or role")
+    normalized_search = search.strip().casefold()
+    visible_accounts = [
+        account for account in accounts
+        if normalized_search in account["email"].casefold()
+        or normalized_search in account["role"].casefold()
+    ]
+    st.dataframe(
+        [
+            {
+                "Email": account["email"],
+                "Role": "Administrator" if account["role"] == "admin" else "User",
+                "Created": account["created_at"],
+            }
+            for account in visible_accounts
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+
+    st.subheader("Grant administrator access")
+    eligible_accounts = [
+        account["email"] for account in accounts if account["role"] == "user"
+    ]
+    if eligible_accounts:
+        with st.form("orbit-promote-account"):
+            target_email = st.selectbox("Account", eligible_accounts)
+            confirmed = st.checkbox(
+                "I confirm this account should receive organization-wide admin access."
+            )
+            submitted = st.form_submit_button(
+                "Grant administrator access",
+                type="primary",
+            )
+        if submitted:
+            if not confirmed:
+                st.warning("Confirm the role change before granting admin access.")
+            else:
+                try:
+                    promote_user_to_admin_by_admin(user_email, target_email)
+                    st.session_state["orbit_admin_success"] = (
+                        f"Administrator access granted to {target_email}."
+                    )
+                    st.rerun()
+                except (PermissionError, ValueError, OSError, sqlite3.Error) as error:
+                    st.error(f"Could not update account access: {error}")
+    else:
+        st.info("All registered accounts already have administrator access.")
+    st.caption(
+        "This action grants organization-wide claim visibility and approval authority. "
+        "The app does not provide a role-demotion action."
+    )
+    st.stop()
+
 if selected_page == "Command Center":
     all_runs = list_runs(
         limit=500, owner_email=user_email, is_admin=is_admin
@@ -996,11 +1502,19 @@ if selected_page == "Command Center":
     completed = sum(x.get("status") == "completed" for x in all_runs)
     awaiting = sum(x.get("status") == "awaiting_approval" for x in all_runs)
     failed = sum(x.get("status") == "failed" for x in all_runs)
+    dashboard_label = (
+        "ADMINISTRATION / CLAIM OPERATIONS"
+        if is_admin else "YOUR CLAIMS / PERSONAL DASHBOARD"
+    )
     st.markdown(
         '<div class="cc-top"><div><div class="cc-brand">ORBIT</div>'
-        '<div class="cc-sub">DECISION INTELLIGENCE / COMMAND CENTER</div></div>'
+        f'<div class="cc-sub">{dashboard_label}</div></div>'
         '<div class="cc-status">● LOCAL SYSTEM · ADAPTIVE MODE · SIMULATION</div></div>',
         unsafe_allow_html=True,
+    )
+    st.caption(
+        "Organization-wide submissions and approval workload."
+        if is_admin else "A private overview of claims you have submitted."
     )
     k = st.columns(4)
     claim_label = "CLAIMS PROCESSED" if is_admin else "MY CLAIMS"
@@ -1067,12 +1581,12 @@ if selected_page == "Command Center":
             )
             if selected_run:
                 st.markdown(
-                    f'<div class="cc-big">{selected_run["shipment_id"]}</div>'
+                    f'<div class="cc-big">{html_escape(str(selected_run["shipment_id"]))}</div>'
                     '<div class="cc-muted">SELECTED SHIPMENT CLAIM</div>'
                     f'<div style="margin:9px"><span class="cc-chip">'
-                    f'{selected_run["status"].replace("_", " ").upper()}</span>'
+                    f'{html_escape(selected_run["status"].replace("_", " ").upper())}</span>'
                     f'<span class="cc-chip">'
-                    f'{(selected_run.get("decision") or "PENDING").upper()}</span></div>',
+                    f'{html_escape((selected_run.get("decision") or "PENDING").upper())}</span></div>',
                     unsafe_allow_html=True,
                 )
                 st.write(
@@ -1085,11 +1599,13 @@ if selected_page == "Command Center":
                 evidence_score = uncertainty.get("evidence_completeness")
                 support_value = f"{support_score}/100" if support_score is not None else "—"
                 evidence_value = f"{evidence_score}%" if evidence_score is not None else "—"
-                support_column, evidence_column, processing_column = st.columns(3)
-                support_column.metric("Support", support_value)
-                evidence_column.metric("Evidence", evidence_value)
-                processing_column.metric(
-                    "Processing", f'{selected_run.get("processing_ms", 0)} ms'
+                st.markdown(
+                    '<div class="cc-mini-metrics">'
+                    f'<div><small>Support</small><b>{html_escape(support_value)}</b></div>'
+                    f'<div><small>Evidence</small><b>{html_escape(evidence_value)}</b></div>'
+                    f'<div><small>Processing</small><b>{html_escape(str(selected_run.get("processing_ms", 0)))} ms</b></div>'
+                    '</div>',
+                    unsafe_allow_html=True,
                 )
             else:
                 st.markdown(
@@ -1110,11 +1626,11 @@ if selected_page == "Command Center":
             )
             if selected_run:
                 st.markdown(
-                    f'<div class="cc-muted">SHIPMENT</div><b>{selected_run["shipment_id"]}</b>'
+                    f'<div class="cc-muted">SHIPMENT</div><b>{html_escape(str(selected_run["shipment_id"]))}</b>'
                     f'<div class="cc-muted" style="margin-top:9px">WORKFLOW STATUS</div>'
-                    f'<b>{selected_run["status"].replace("_", " ").title()}</b>'
+                    f'<b>{html_escape(selected_run["status"].replace("_", " ").title())}</b>'
                     f'<div class="cc-muted" style="margin-top:9px">PREPARED ACTION</div>'
-                    f'<b>{(selected_run.get("action_type") or "Not prepared").replace("_", " ").title()}</b>'
+                    f'<b>{html_escape((selected_run.get("action_type") or "Not prepared").replace("_", " ").title())}</b>'
                     f'<div class="cc-muted" style="margin-top:9px">AUDIT EVENTS</div>'
                     f'<b>{len(selected_run.get("audit", []))}</b>',
                     unsafe_allow_html=True,
@@ -1140,11 +1656,15 @@ if selected_page == "Command Center":
             if all_runs:
                 for item in all_runs[:5]:
                     st.markdown(
-                        f'<div class="cc-agent"><span>{item["shipment_id"]}<br>'
+                        f'<div class="cc-agent"><span>{html_escape(str(item["shipment_id"]))}<br>'
                         f'<small>{item.get("created_at", "")[:16].replace("T", " ")}</small></span>'
-                        f'<span>{item.get("status", "").replace("_", " ").upper()}</span></div>',
+                        f'<span>{html_escape(item.get("status", "").replace("_", " ").upper())}</span></div>',
                         unsafe_allow_html=True,
                     )
+                    if is_admin:
+                        st.caption(
+                            f"Submitted by {item.get('owner_email') or 'Legacy account'}"
+                        )
             else:
                 st.caption("No claims processed yet.")
     with lower_mid:
