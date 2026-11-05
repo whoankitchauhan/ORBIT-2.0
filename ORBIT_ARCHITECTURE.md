@@ -6,14 +6,14 @@ The supplied repository contains a compact Python 3.10+ / Streamlit application 
 
 | Module | Existing responsibility |
 |---|---|
-| `app.py` | Single-page Streamlit dashboard, sample-case selection, workflow history, evidence, approval and audit views |
+| `app.py` | Streamlit application shell, role-specific dashboards/navigation, theme selection, sample-case selection, workflow history, evidence, approval and audit views |
 | `pipeline.py` | Supervisor orchestration, stage persistence, failure recovery, approval-gated simulated actions |
 | `agents.py` | Deterministic Research, Analysis, Validation and Action agents |
 | `storage.py` | SQLite schema, sample-data seeding, persistence and read helpers |
 | `sample_data.py` | Six simulated shipment records and four local example policies |
 | `evaluation.py` | Small six-case baseline comparison and safety/recovery checks |
 | `tests/` | Authentication, schema migration, workflow, ownership, approval and recovery tests |
-| `auth.py` | Local password authentication, User/Administrator roles, and admin promotion |
+| `auth.py` | Local password authentication, User/Administrator roles, persisted theme preferences, and administrator-guarded account access |
 
 ### Existing capabilities retained
 
@@ -27,7 +27,7 @@ The supplied repository contains a compact Python 3.10+ / Streamlit application 
 ### Technical limitations found
 
 - The supplied implementation is deterministic; it does not contain an LLM integration, live carrier API, external document retrieval, or production claim adjudication.
-- The existing dashboard is a single dark-themed Streamlit application, not a multi-page enterprise application.
+- The application remains a single Streamlit script rather than a separately routed frontend. It provides persisted System, Light, and Dark themes and role-specific User and Administrator navigation.
 - Original workflow stages were mostly linear and always included Research, Analysis, Validation and Action.
 - No persistent reviewer-feedback table, explicit debate record, support-score rubric, or decision graph existed.
 - Existing sample policies are educational local examples, not official carrier policy.
@@ -60,13 +60,14 @@ The existing sample shipment records remain the only shipment source. Every samp
 - Persist new derived state inside each run's existing `state_json`.
 - Keep human approval and simulation-only action semantics, requiring a persisted Administrator role for decisions.
 - Filter user claim history and feedback by the signed-in account; Administrators can review all accounts' records.
+- Persist theme preferences per account and provide an Administrator-only account directory and role-promotion action. Account listing and promotion re-check the persisted administrator role in the auth layer.
 - Add UI workbench panels without removing the original claim workflow and audit history.
 - Run the existing unit tests after changes.
 
 ## New modules and artifacts
 
 - `orbit_intelligence.py` — adaptive planning, bounded debate, uncertainty scoring, decision graph, feedback memory and scenario catalog.
-- `auth.py` — salted password hashing, role migration, role lookup and local Administrator promotion.
+- `auth.py` — salted password hashing, role migration, role lookup, theme preferences, and guarded account listing/promotion.
 - `ORBIT_ARCHITECTURE.md` — this architecture and migration record.
 
 ## Known gaps / production roadmap
